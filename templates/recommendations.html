@@ -5,568 +5,295 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emlak Önerileri - Akıllı Park & Emlak</title>
     
-    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        }
+        /* Modern Aydınlık Tema */
+        :root { --bg-color: #f8fafc; --primary-color: #1e293b; --accent-blue: #2563eb; --card-bg: #ffffff; --border-color: #e2e8f0; }
+        body { font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--primary-color); }
+        
+        .navbar { background: rgba(255, 255, 255, 0.95) !important; backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); padding: 15px 0; }
+        .navbar-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary-color) !important; }
+        .navbar-brand i { color: var(--accent-blue); }
+        .nav-link { color: #475569 !important; font-weight: 600; margin: 0 10px; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-blue) !important; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            min-height: 100vh;
-        }
+        .page-header { background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); padding: 120px 0 50px; border-bottom: 1px solid var(--border-color); }
 
-        .navbar {
-            background: rgba(44, 62, 80, 0.95) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
+        .filter-section { background: var(--card-bg); border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); margin-bottom: 30px; }
+        
+        .form-label { font-weight: 600; color: #475569; font-size: 0.95rem; }
+        .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 10px 15px; }
+        .form-range::-webkit-slider-thumb { background: var(--accent-blue); }
+        
+        .btn-recommend { background: var(--accent-blue); color: white; border: none; padding: 14px 40px; border-radius: 50px; font-weight: 700; transition: all 0.3s; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); font-size: 1.1rem; }
+        .btn-recommend:hover { background: #1d4ed8; transform: translateY(-2px); color: white; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
 
-        .page-header {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 80px 0 60px;
-            margin-top: 76px;
-        }
-
-        .property-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            overflow: hidden;
-            margin-bottom: 20px;
-            border: none;
-        }
-
-        .property-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-
-        .property-image {
-            height: 200px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-
-        .property-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .similarity-score {
-            background: var(--primary-gradient);
-            color: white;
-        }
-
-        .price-tag {
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-
-        .property-details {
-            padding: 25px;
-        }
-
-        .property-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-
-        .property-location {
-            color: #7f8c8d;
-            margin-bottom: 15px;
-        }
-
-        .property-features {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .feature {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #555;
-            font-size: 0.9rem;
-        }
-
-        .feature i {
-            color: #667eea;
-        }
-
-        .filter-section {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        .btn-recommend {
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-recommend:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .loading-spinner {
-            color: white;
-            text-align: center;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
-            color: #7f8c8d;
-        }
-
-        .property-stats {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .stat-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .property-selector {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .page-header {
-                padding: 60px 0 40px;
-            }
-            
-            .property-features {
-                gap: 10px;
-            }
-        }
+        /* Zillow Tarzı İlan Kartları */
+        .property-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: all 0.3s ease; cursor: pointer; }
+        .property-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: #cbd5e1; }
+        .card-img-wrapper { position: relative; height: 220px; overflow: hidden; }
+        .card-img-top { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .property-card:hover .card-img-top { transform: scale(1.05); }
+        
+        .badge-match { position: absolute; top: 12px; left: 12px; background: rgba(16, 185, 129, 0.95); padding: 6px 12px; border-radius: 8px; font-weight: 700; color: white; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .badge-selected { position: absolute; top: 12px; right: 12px; background: rgba(37, 99, 235, 0.95); padding: 6px 12px; border-radius: 8px; font-weight: 700; color: white; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .loading-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.9); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(4px); }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fas fa-car-alt me-2"></i>Akıllı Park & Emlak
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <a class="navbar-brand" href="/"><i class="fas fa-home"></i> Akıllı Park & Emlak</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars text-dark"></i>
             </button>
-            
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Ana Sayfa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/parking"><i class="fas fa-parking me-1"></i>Park Analizi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/price-prediction"><i class="fas fa-chart-line me-1"></i>Fiyat Tahmini</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/recommendations"><i class="fas fa-lightbulb me-1"></i>Öneriler</a>
-                    </li>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/">Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/parking">Park Analizi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/price-prediction">Fiyat Tahmini</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/recommendations">Öneriler</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Page Header -->
     <section class="page-header">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-3">
-                        <i class="fas fa-lightbulb me-3"></i>Emlak Önerileri
-                    </h1>
-                    <p class="lead mb-0">
-                        AI destekli benzerlik analizi ile size özel emlak önerileri
-                    </p>
-                </div>
-                <div class="col-lg-4 text-lg-end">
-                    <div class="badge bg-white text-primary p-3">
-                        <i class="fas fa-magic me-2"></i>Akıllı Öneri Sistemi
-                    </div>
+                    <h1 class="display-5 fw-bold mb-3 text-dark"><i class="fas fa-magic text-primary me-2"></i>Emlak Öneri Motoru</h1>
+                    <p class="lead mb-0 text-muted">Makine öğrenmesi ve KNN algoritması ile size en uygun portföyü listeler.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Main Content -->
-    <div class="container mt-5">
-        <!-- Property Selector -->
-        <div class="property-selector">
-            <h4 class="mb-4"><i class="fas fa-search me-2"></i>Emlak Seçimi</h4>
+    <div class="container mt-5 mb-5">
+        
+        <div class="filter-section">
+            <h5 class="mb-4 fw-bold"><i class="fas fa-sliders-h me-2 text-primary"></i>Kriterleri Belirle</h5>
             
-            <div class="row g-3">
+            <div class="row g-4">
                 <div class="col-md-8">
-                    <label class="form-label">İlan Seçin</label>
-                    <select class="form-select" id="propertySelector">
-                        <option value="">Bir emlak seçin...</option>
+                    <label class="form-label">Referans İlan Seçin</label>
+                    <select class="form-select form-select-lg" id="propertySelector">
+                        <option value="">Yükleniyor...</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Öneri Sayısı</label>
-                    <select class="form-select" id="recommendationCount">
-                        <option value="3">3 Öneri</option>
-                        <option value="5" selected>5 Öneri</option>
-                        <option value="10">10 Öneri</option>
+                    <label class="form-label">Kaç Öneri İstiyorsunuz?</label>
+                    <select class="form-select form-select-lg" id="recommendationCount">
+                        <option value="3">En İyi 3 Öneri</option>
+                        <option value="5" selected>En İyi 5 Öneri</option>
+                        <option value="10">En İyi 10 Öneri</option>
                     </select>
                 </div>
             </div>
             
-            <div class="row g-3 mt-3">
+            <div class="row g-4 mt-2 border-top pt-3">
                 <div class="col-md-4">
-                    <label class="form-label">Lokasyon Ağırlığı</label>
+                    <label class="form-label d-flex justify-content-between">
+                        <span><i class="fas fa-map-marker-alt text-danger me-1"></i>Lokasyon Ağırlığı</span> 
+                        <span id="locationWeightValue" class="text-primary fw-bold">0.3</span>
+                    </label>
                     <input type="range" class="form-range" id="locationWeight" min="0" max="1" step="0.1" value="0.3">
-                    <small class="text-muted">Değer: <span id="locationWeightValue">0.3</span></small>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Lüks Ağırlığı</label>
+                    <label class="form-label d-flex justify-content-between">
+                        <span><i class="fas fa-gem text-info me-1"></i>Lüks Ağırlığı</span> 
+                        <span id="luxuryWeightValue" class="text-primary fw-bold">0.2</span>
+                    </label>
                     <input type="range" class="form-range" id="luxuryWeight" min="0" max="1" step="0.1" value="0.2">
-                    <small class="text-muted">Değer: <span id="luxuryWeightValue">0.2</span></small>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Max Fiyat Farkı</label>
+                    <label class="form-label d-flex justify-content-between">
+                        <span><i class="fas fa-money-bill-wave text-success me-1"></i>Max Fiyat Farkı</span> 
+                        <span class="text-primary fw-bold">±<span id="priceThresholdValue">30</span>%</span>
+                    </label>
                     <input type="range" class="form-range" id="priceThreshold" min="0.1" max="0.5" step="0.05" value="0.3">
-                    <small class="text-muted">±<span id="priceThresholdValue">30</span>%</small>
                 </div>
             </div>
             
-            <div class="text-center mt-4">
+            <div class="text-center mt-5">
                 <button class="btn btn-recommend" onclick="getRecommendations()">
-                    <i class="fas fa-magic me-2"></i>Önerileri Getir
+                    <i class="fas fa-search me-2"></i>AI Önerilerini Getir
                 </button>
             </div>
         </div>
 
-        <!-- Results Section -->
         <div id="recommendationsSection" style="display: none;">
-            <!-- Selected Property -->
-            <div class="mb-4">
-                <h4><i class="fas fa-star me-2"></i>Seçilen Emlak</h4>
-                <div id="selectedProperty"></div>
+            
+            <div class="mb-5">
+                <h4 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-thumbtack text-primary me-2"></i>Referans İlanınız</h4>
+                <div class="row" id="selectedProperty"></div>
             </div>
 
-            <!-- Recommendations -->
             <div>
-                <h4 class="mb-4"><i class="fas fa-heart me-2"></i>Size Özel Öneriler</h4>
-                <div id="recommendationsList" class="row"></div>
+                <h4 class="fw-bold mb-4 border-bottom pb-2"><i class="fas fa-heart text-danger me-2"></i>Sizin İçin Seçtiklerimiz</h4>
+                <div id="recommendationsList" class="row g-4"></div>
             </div>
+            
         </div>
 
-        <!-- No Results -->
-        <div id="noResults" class="no-results" style="display: none;">
-            <i class="fas fa-search fa-4x mb-3"></i>
-            <h4>Henüz öneri yapılmadı</h4>
-            <p>Yukarıdan bir emlak seçip "Önerileri Getir" butonuna tıklayın</p>
+        <div id="noResults" class="text-center py-5" style="border: 2px dashed #cbd5e1; border-radius: 16px;">
+            <i class="fas fa-robot fa-4x text-muted mb-3 opacity-25"></i>
+            <h5 class="text-dark fw-bold">Beklemede</h5>
+            <p class="text-muted mb-0">Yukarıdan referans bir ilan seçip kriterlerinizi belirleyin.</p>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner">
-            <i class="fas fa-spinner fa-spin fa-4x mb-3"></i>
-            <h4>Öneriler hazırlanıyor...</h4>
+        <div class="text-center">
+            <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+            <h5 class="fw-bold text-dark">Eşleşmeler Aranıyor...</h5>
+            <p class="text-muted small">Bu işlem birkaç saniye sürebilir.</p>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
     <script>
         let propertiesData = [];
 
         $(document).ready(function() {
-            loadProperties();
-            updateRangeValues();
+            // İlanları Veritabanından Getir
+            loadPropertiesFromAPI();
+            
+            // Slider (Range) Değerlerini Anlık Güncelle
+            $('#locationWeight').on('input', function() { 
+                $('#locationWeightValue').text($(this).val()); 
+            });
+            $('#luxuryWeight').on('input', function() { 
+                $('#luxuryWeightValue').text($(this).val()); 
+            });
+            $('#priceThreshold').on('input', function() { 
+                $('#priceThresholdValue').text(Math.round($(this).val() * 100)); 
+            });
         });
 
-        // Load properties list
-        async function loadProperties() {
+        // API'den İlanları Çekme ve Seçim Kutusuna Doldurma
+        async function loadPropertiesFromAPI() {
             try {
-                // Mock data - replace with actual API call
-                propertiesData = [
-                    {
-                        id: 1,
-                        title: "Lüks Villa - Beşiktaş",
-                        location: "Beşiktaş, İstanbul",
-                        price: 15000000,
-                        sqrt_m2: 350,
-                        totalrooms: 5,
-                        bathroom_count: 3,
-                        location_score: 9.2,
-                        luxury_score_final: 8.5,
-                        price_per_m2: 42857,
-                        Furnished: 1,
-                        Air_conditioning: 1,
-                        has_balcony: 1,
-                        image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400"
-                    },
-                    {
-                        id: 2,
-                        title: "Modern Daire - Kadıköy",
-                        location: "Kadıköy, İstanbul",
-                        price: 8500000,
-                        sqrt_m2: 180,
-                        totalrooms: 3,
-                        bathroom_count: 2,
-                        location_score: 8.1,
-                        luxury_score_final: 7.2,
-                        price_per_m2: 47222,
-                        Furnished: 1,
-                        Air_conditioning: 1,
-                        has_balcony: 1,
-                        image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400"
-                    },
-                    {
-                        id: 3,
-                        title: "Şehir Manzaralı Daire - Şişli",
-                        location: "Şişli, İstanbul",
-                        price: 12000000,
-                        sqrt_m2: 220,
-                        totalrooms: 4,
-                        bathroom_count: 2,
-                        location_score: 8.8,
-                        luxury_score_final: 8.0,
-                        price_per_m2: 54545,
-                        Furnished: 0,
-                        Air_conditioning: 1,
-                        has_balcony: 1,
-                        image: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400"
-                    }
-                ];
+                let res = await fetch('/api/properties?limit=100');
+                if (!res.ok) throw new Error('Veri yüklenemedi');
+                const payload = await res.json();
+                const list = (payload && payload.properties) ? payload.properties : [];
 
-                // Populate selector
+                if (!list.length) {
+                    res = await fetch('/api/csv-properties');
+                    propertiesData = await res.json();
+                } else {
+                    propertiesData = list.map((p) => ({
+                        id: p.id, 
+                        title: p.title || 'Lüks Daire',
+                        location: `${p.district || ''}, ${p.province || 'İstanbul'}`,
+                        price: p.price || 0, 
+                        sqrt_m2: p.m2 || 100,
+                        totalrooms: p.totalrooms || p.total_rooms || 3, 
+                        bathroom_count: p.bathroom_count || 1,
+                        image: p.image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80'
+                    }));
+                }
+
                 const selector = $('#propertySelector');
-                propertiesData.forEach(property => {
-                    selector.append(`<option value="${property.id}">${property.title} - ${formatCurrency(property.price)}</option>`);
+                selector.empty().append('<option value="">-- Lütfen Referans Bir İlan Seçin --</option>');
+                
+                propertiesData.forEach(p => {
+                    const formatPrice = new Intl.NumberFormat('tr-TR', {style:'currency', currency:'TRY', maximumFractionDigits:0}).format(p.price);
+                    selector.append(`<option value="${p.id}">${p.title} - ${formatPrice}</option>`);
                 });
-
-            } catch (error) {
-                console.error('Properties loading error:', error);
-                showAlert('Emlaklar yüklenirken hata oluştu', 'error');
+            } catch (error) { 
+                console.error("İlanlar yüklenirken hata oluştu", error); 
+                $('#propertySelector').html('<option value="">İlanlar Yüklenemedi!</option>');
             }
         }
 
-        // Get recommendations
+        // Önerileri AI Backend'den Getir
         async function getRecommendations() {
-            const selectedId = parseInt($('#propertySelector').val());
+            const selectedId = $('#propertySelector').val();
             
-            if (!selectedId) {
-                showAlert('Lütfen bir emlak seçin', 'warning');
-                return;
+            if (!selectedId) { 
+                alert('Lütfen önce referans alınacak bir ilan seçin!'); 
+                return; 
             }
 
-            $('#loadingOverlay').show();
+            $('#loadingOverlay').css('display', 'flex');
             
             try {
-                // Find selected property
-                const selectedProperty = propertiesData.find(p => p.id === selectedId);
-                
-                // Mock recommendations - replace with actual API call
-                const mockRecommendations = propertiesData
-                    .filter(p => p.id !== selectedId)
-                    .map(p => ({
-                        ...p,
-                        similarity: Math.random() * 0.3 + 0.7, // 0.7-1.0
-                        hybrid_score: Math.random() * 0.5 + 0.5
-                    }))
-                    .sort((a, b) => b.hybrid_score - a.hybrid_score)
-                    .slice(0, parseInt($('#recommendationCount').val()));
+                const selectedProperty = propertiesData.find(p => String(p.id) === String(selectedId));
+                if (!selectedProperty) throw new Error('Seçilen ilan veritabanında bulunamadı.');
 
-                displayRecommendations(selectedProperty, mockRecommendations);
+                const count = parseInt($('#recommendationCount').val()) || 5;
+                const wl = parseFloat($('#locationWeight').val()) || 0.3;
+                const wx = parseFloat($('#luxuryWeight').val()) || 0.2;
+                const pt = parseFloat($('#priceThreshold').val()) || 0.3;
+
+                const res = await fetch(`/api/get-recommendations/${selectedId}?weight_location=${wl}&weight_luxury=${wx}&max_price_diff=${pt}&n=${count}`);
+                const data = await res.json();
+
+                const recs = (data.recommendations || []).slice(0, count);
+                
+                // Seçili İlanı Ekrana Bas
+                $('#selectedProperty').html(createPropertyCard(selectedProperty, true));
+                
+                // Önerilenleri Döngüyle Ekrana Bas
+                if(recs.length > 0) {
+                    const recsHtml = recs.map(r => createPropertyCard(r, false, true)).join('');
+                    $('#recommendationsList').html(recsHtml);
+                } else {
+                    $('#recommendationsList').html('<div class="col-12"><div class="alert alert-warning">Bu kriterlere uygun benzer ilan bulunamadı. Lütfen "Max Fiyat Farkı" oranını artırın.</div></div>');
+                }
+                
+                $('#noResults').hide();
+                $('#recommendationsSection').fadeIn();
                 
             } catch (error) {
-                console.error('Recommendations error:', error);
-                showAlert('Öneriler alınırken hata oluştu', 'error');
+                alert('Öneriler alınırken hata oluştu: ' + error.message);
+                console.error(error);
             } finally {
                 $('#loadingOverlay').hide();
             }
         }
 
-        // Display recommendations
-        function displayRecommendations(selectedProperty, recommendations) {
-            // Show selected property
-            const selectedHtml = createPropertyCard(selectedProperty, true);
-            $('#selectedProperty').html(selectedHtml);
-
-            // Show recommendations
-            const recommendationsHtml = recommendations.map(property => 
-                createPropertyCard(property, false, true)
-            ).join('');
-            
-            $('#recommendationsList').html(recommendationsHtml);
-            $('#noResults').hide();
-            $('#recommendationsSection').show();
-        }
-
-        // Create property card HTML
+        // Premium Zillow / Sahibinden Tarzı Kart Üretici
         function createPropertyCard(property, isSelected = false, showSimilarity = false) {
-            const cardClass = isSelected ? 'col-12' : 'col-md-6 col-lg-4';
+            // Referans ilan tek başına ortada büyük dursun, öneriler 3'lü kolonlarda dizilsin
+            const cardClass = isSelected ? 'col-lg-6 offset-lg-3' : 'col-md-6 col-lg-4';
             
+            const simPercent = showSimilarity && property.similarity ? Math.round(property.similarity * 100) : null;
+            const priceFmt = new Intl.NumberFormat('tr-TR', {style: 'currency', currency: 'TRY', maximumFractionDigits:0}).format(property.price || 0);
+            const imgUrl = property.image || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80';
+
             return `
                 <div class="${cardClass}">
-                    <div class="property-card">
-                        <div class="property-image" style="background-image: url('${property.image}')">
-                            ${isSelected ? 
-                                '<div class="property-badge" style="background: #27ae60; color: white;">Seçilen Emlak</div>' : 
-                                showSimilarity ? 
-                                `<div class="property-badge similarity-score">${(property.similarity * 100).toFixed(0)}% Benzer</div>` : 
-                                ''
-                            }
-                            <div class="price-tag">${formatCurrency(property.price)}</div>
+                    <div class="property-card d-flex flex-column h-100" onclick="window.location.href='/property/${property.id}'">
+                        <div class="card-img-wrapper">
+                            <img src="${imgUrl}" class="card-img-top" onerror="this.src='https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80'">
+                            
+                            ${isSelected ? '<div class="badge-selected"><i class="fas fa-crosshairs me-1"></i>Referans İlanınız</div>' : ''}
+                            ${simPercent ? `<div class="badge-match"><i class="fas fa-check-circle me-1"></i>%${simPercent} Eşleşme</div>` : ''}
                         </div>
                         
-                        <div class="property-details">
-                            <h5 class="property-title">${property.title}</h5>
-                            <p class="property-location">
-                                <i class="fas fa-map-marker-alt me-1"></i>${property.location}
-                            </p>
+                        <div class="card-body p-4 d-flex flex-column flex-grow-1">
+                            <h4 class="fw-bold text-primary mb-2">${priceFmt}</h4>
+                            <h6 class="fw-bold text-dark text-truncate mb-2">${property.title || 'Satılık Gayrimenkul'}</h6>
+                            <p class="small text-muted mb-3"><i class="fas fa-map-marker-alt text-danger me-1"></i>${property.location || ''}</p>
                             
-                            <div class="property-features">
-                                <div class="feature">
-                                    <i class="fas fa-expand-arrows-alt"></i>
-                                    <span>${property.sqrt_m2} m²</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fas fa-bed"></i>
-                                    <span>${property.totalrooms} oda</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fas fa-bath"></i>
-                                    <span>${property.bathroom_count} banyo</span>
-                                </div>
-                            </div>
-                            
-                            <div class="property-stats">
-                                <div class="stat-row">
-                                    <span>m² Fiyatı:</span>
-                                    <strong>${formatNumber(property.price_per_m2)} TL</strong>
-                                </div>
-                                <div class="stat-row">
-                                    <span>Lokasyon Puanı:</span>
-                                    <strong>${property.location_score}/10</strong>
-                                </div>
-                                <div class="stat-row">
-                                    <span>Lüks Puanı:</span>
-                                    <strong>${property.luxury_score_final}/10</strong>
-                                </div>
-                                ${property.Furnished ? '<div class="stat-row"><span>Mobilyalı</span><i class="fas fa-check text-success"></i></div>' : ''}
-                                ${property.Air_conditioning ? '<div class="stat-row"><span>Klima</span><i class="fas fa-check text-success"></i></div>' : ''}
-                                ${property.has_balcony ? '<div class="stat-row"><span>Balkon</span><i class="fas fa-check text-success"></i></div>' : ''}
+                            <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top" style="font-size: 0.95rem; color: #475569;">
+                                <span><i class="fas fa-vector-square me-1 text-info"></i>${Math.round(property.sqrt_m2 || property.m2 || 100)} m²</span>
+                                <span><i class="fas fa-door-open me-1 text-info"></i>${property.totalrooms || 3} Oda</span>
+                                <span><i class="fas fa-bath me-1 text-info"></i>${property.bathroom_count || 1} Banyo</span>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
-        }
-
-        // Update range values
-        function updateRangeValues() {
-            $('#locationWeight').on('input', function() {
-                $('#locationWeightValue').text($(this).val());
-            });
-            
-            $('#luxuryWeight').on('input', function() {
-                $('#luxuryWeightValue').text($(this).val());
-            });
-            
-            $('#priceThreshold').on('input', function() {
-                $('#priceThresholdValue').text(Math.round($(this).val() * 100));
-            });
-        }
-
-        // Helper functions
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('tr-TR', {
-                style: 'currency',
-                currency: 'TRY'
-            }).format(amount);
-        }
-
-        function formatNumber(num) {
-            return new Intl.NumberFormat('tr-TR').format(num);
-        }
-
-        function showAlert(message, type = 'info') {
-            const alertClass = type === 'error' ? 'alert-danger' : `alert-${type}`;
-            const alertHtml = `
-                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-                    <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-            $('body').prepend(alertHtml);
-            
-            setTimeout(() => {
-                $('.alert').fadeOut();
-            }, 5000);
         }
     </script>
 </body>

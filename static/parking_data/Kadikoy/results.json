@@ -1,0 +1,35 @@
+{
+  "summary": {
+    "park_convenience_score": 4.1,
+    "total_capacity": 41,
+    "average_empty": 17,
+    "average_occupied": 24,
+    "last_updated": "2025-10-19T15:30:13.290444"
+  },
+  "images": [
+    {
+      "original_path": "static/parking_data/Kadikoy/images/20251018_165719_8-Copy-Copy_jpg.rf.c241425e16b778cf7777ffa759664db3.jpg",
+      "result_path": "static/parking_data/Kadikoy/results/20251018_165719_8-Copy-Copy_jpg.rf.c241425e16b778cf7777ffa759664db3_result.jpg",
+      "occupied_spots": 6,
+      "empty_spots": 12,
+      "total_spots": 18,
+      "analyzed_at": "2025-10-18T16:58:34.657413"
+    },
+    {
+      "original_path": "static/parking_data/Kadikoy/images/20251019_152054_3_jpg.rf.532cb1cd8f7a2ed68a10f24e281a28d1.jpg",
+      "result_path": "static/parking_data/Kadikoy/results/20251019_152054_3_jpg.rf.532cb1cd8f7a2ed68a10f24e281a28d1_result.jpg",
+      "occupied_spots": 2,
+      "empty_spots": 3,
+      "total_spots": 5,
+      "analyzed_at": "2025-10-19T15:30:12.826972"
+    },
+    {
+      "original_path": "static/parking_data/Kadikoy/images/20251019_152101_1-Copy-Copy_jpg.rf.72be000f847857d75e708061d6859736.jpg",
+      "result_path": "static/parking_data/Kadikoy/results/20251019_152101_1-Copy-Copy_jpg.rf.72be000f847857d75e708061d6859736_result.jpg",
+      "occupied_spots": 16,
+      "empty_spots": 2,
+      "total_spots": 18,
+      "analyzed_at": "2025-10-19T15:30:13.289777"
+    }
+  ]
+}

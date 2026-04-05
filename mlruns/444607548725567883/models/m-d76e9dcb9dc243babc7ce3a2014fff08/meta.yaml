@@ -1,0 +1,10 @@
+artifact_location: file:///c:/Users/meric/Desktop/smartcity/mlruns/444607548725567883/models/m-d76e9dcb9dc243babc7ce3a2014fff08/artifacts
+creation_timestamp: 1766228638860
+experiment_id: '444607548725567883'
+last_updated_timestamp: 1766228656174
+model_id: m-d76e9dcb9dc243babc7ce3a2014fff08
+model_type: null
+name: model
+source_run_id: aa91b991984747e196df6ad244cab660
+status: 2
+status_message: null

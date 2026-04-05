@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "park_convenience_score": 2.6,
+    "total_capacity": 209,
+    "average_empty": 54,
+    "average_occupied": 155,
+    "last_updated": "2025-10-19T15:12:30.494437"
+  },
+  "images": [
+    {
+      "original_path": "static/parking_data/Bagcilar/images/20251018_180047_Tel_Aviv_parking_lot.jpg",
+      "result_path": "static/parking_data/Bagcilar/results/20251018_180047_Tel_Aviv_parking_lot_result.jpg",
+      "occupied_spots": 155,
+      "empty_spots": 54,
+      "total_spots": 209,
+      "analyzed_at": "2025-10-19T15:12:30.494437"
+    }
+  ]
+}

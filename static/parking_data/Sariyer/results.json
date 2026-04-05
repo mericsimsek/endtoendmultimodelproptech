@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "park_convenience_score": 7.5,
+    "total_capacity": 44,
+    "average_empty": 33,
+    "average_occupied": 11,
+    "last_updated": "2025-10-19T15:12:31.466829"
+  },
+  "images": [
+    {
+      "original_path": "static/parking_data/Sariyer/images/20251018_180035_DJI_0984_jpg.rf.03db1af85fa3e1e8100e0c05c555098f.jpg",
+      "result_path": "static/parking_data/Sariyer/results/20251018_180035_DJI_0984_jpg.rf.03db1af85fa3e1e8100e0c05c555098f_result.jpg",
+      "occupied_spots": 11,
+      "empty_spots": 33,
+      "total_spots": 44,
+      "analyzed_at": "2025-10-19T15:12:31.466829"
+    }
+  ]
+}

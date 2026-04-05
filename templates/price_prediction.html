@@ -3,685 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emlak Fiyat Tahmini - Akıllı Park & Emlak</title>
+    <title>AI Fiyat Tahmini - Akıllı Park & Emlak</title>
     
-    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --bg-color: #f8fafc;
+            --primary-color: #1e293b;
+            --accent-blue: #2563eb;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            min-height: 100vh;
-        }
+        body { font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--primary-color); }
+        
+        .navbar { background: rgba(255, 255, 255, 0.95) !important; backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); padding: 15px 0; }
+        .navbar-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary-color) !important; }
+        .navbar-brand i { color: var(--accent-blue); }
+        .nav-link { color: #475569 !important; font-weight: 600; margin: 0 10px; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-blue) !important; }
 
-        .navbar {
-            background: rgba(44, 62, 80, 0.95) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
+        .page-header { background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); padding: 120px 0 50px; border-bottom: 1px solid var(--border-color); }
 
-        .page-header {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 80px 0 60px;
-            margin-top: 76px;
-        }
+        .prediction-card { background: var(--card-bg); border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); height: 100%; }
+        
+        .form-section { background: #f8fafc; border-radius: 12px; padding: 25px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+        .form-label { font-weight: 600; color: #475569; font-size: 0.95rem; }
+        .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 10px 15px; font-weight: 500; }
+        .form-control:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        
+        .btn-predict { background: var(--accent-blue); color: white; border: none; padding: 14px 20px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; transition: all 0.3s; }
+        .btn-predict:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); color: white;}
 
-        .prediction-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: none;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .prediction-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-        }
-
-        .form-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .result-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-left: 5px solid #667eea;
-        }
-
-        .predicted-price {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #667eea;
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .feature-importance {
-            height: 300px;
-            margin: 30px 0;
-        }
-
-        .btn-predict {
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-predict:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .form-label {
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .form-control, .form-select {
-            border-radius: 10px;
-            padding: 12px 15px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .loading-spinner {
-            color: white;
-            text-align: center;
-        }
-
-        .comparison-chart {
-            height: 350px;
-            margin: 30px 0;
-        }
-
-        .info-icon {
-            color: #667eea;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .page-header {
-                padding: 60px 0 40px;
-            }
-            
-            .predicted-price {
-                font-size: 2.5rem;
-            }
-        }
+        .result-box { background: #eff6ff; border-radius: 12px; padding: 30px; border: 1px solid #bfdbfe; text-align: center; }
+        .predicted-price { font-size: 3.5rem; font-weight: 800; color: var(--accent-blue); letter-spacing: -1px; margin: 15px 0; }
+        
+        /* Benzer İlan Kartları (GELİŞMİŞ) */
+        .property-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: all 0.3s ease; cursor: pointer; }
+        .property-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .card-img-wrapper { position: relative; height: 180px; overflow: hidden; }
+        .card-img-top { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .property-card:hover .card-img-top { transform: scale(1.05); }
+        .badge-match { position: absolute; top: 12px; left: 12px; background: rgba(16, 185, 129, 0.95); padding: 5px 10px; border-radius: 6px; font-weight: 700; color: white; font-size: 0.8rem; }
+        
+        .loading-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.9); display: none; justify-content: center; align-items: center; z-index: 9999; }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fas fa-car-alt me-2"></i>Akıllı Park & Emlak
-            </a>
-            
+            <a class="navbar-brand" href="/"><i class="fas fa-home"></i> Akıllı Park & Emlak</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+                <i class="fas fa-bars text-dark"></i>
             </button>
-            
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Ana Sayfa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/parking"><i class="fas fa-parking me-1"></i>Park Analizi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/price-prediction"><i class="fas fa-chart-line me-1"></i>Fiyat Tahmini</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/recommendations"><i class="fas fa-lightbulb me-1"></i>Öneriler</a>
-                    </li>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/">Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/parking">Park Analizi</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/price-prediction">Fiyat Tahmini</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/recommendations">Öneriler</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Page Header -->
     <section class="page-header">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-3">
-                        <i class="fas fa-chart-line me-3"></i>Emlak Fiyat Tahmini
-                    </h1>
-                    <p class="lead mb-0">
-                        XGBoost algoritması ile bölgenizdeki emlak fiyatlarını tahmin edin
-                    </p>
-                </div>
-                <div class="col-lg-4 text-lg-end">
-                    <div class="badge bg-white text-primary p-3">
-                        <i class="fas fa-bolt me-2"></i>Gerçek Zamanlı Tahmin
-                    </div>
+                    <h1 class="display-5 fw-bold mb-3 text-dark"><i class="fas fa-calculator text-primary me-2"></i>Emlak Değerleme Aracı</h1>
+                    <p class="lead mb-0 text-muted">Evinizin güncel piyasa değerini XGBoost algoritması ile anında öğrenin.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Main Content -->
-    <div class="container mt-5">
-        <div class="row">
-            <!-- Form Column -->
-            <div class="col-lg-6">
+    <div class="container mt-5 mb-5">
+        <div class="row g-4">
+            
+            <div class="col-lg-5">
                 <div class="prediction-card">
-                    <div class="card-body">
-                        <h4 class="mb-4"><i class="fas fa-edit me-2"></i>Emlak Bilgileri</h4>
-                        
-                        <form id="pricePredictionForm">
-                            <div class="form-section">
-                                <h5 class="mb-4"><i class="fas fa-home me-2"></i>Temel Bilgiler</h5>
-                                
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="m2_location_interact" class="form-label">
-                                            m² × Lokasyon Etkileşimi
-                                            <i class="fas fa-info-circle info-icon" title="Metrekare ile lokasyon puanının çarpımı"></i>
-                                        </label>
-                                        <input type="number" class="form-control" id="m2_location_interact" required step="0.01" min="0">
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <label for="price_per_m2" class="form-label">
-                                            m² Fiyatı (TL)
-                                            <i class="fas fa-info-circle info-icon" title="Bölgedeki ortalama metrekare fiyatı"></i>
-                                        </label>
-                                        <input type="number" class="form-control" id="price_per_m2" required step="0.01" min="0">
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <label for="room_density" class="form-label">
-                                            Oda Yoğunluğu
-                                            <i class="fas fa-info-circle info-icon" title="Oda sayısının metrekareye oranı"></i>
-                                        </label>
-                                        <input type="number" class="form-control" id="room_density" required step="0.01" min="0">
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <label for="location_tier" class="form-label">
-                                            Lokasyon Seviyesi
-                                            <i class="fas fa-info-circle info-icon" title="1-5 arası lokasyon kalite puanı"></i>
-                                        </label>
-                                        <select class="form-select" id="location_tier" required>
-                                            <option value="">Seçiniz</option>
-                                            <option value="1">1 - Düşük</option>
-                                            <option value="2">2 - Orta Düşük</option>
-                                            <option value="3" selected>3 - Orta</option>
-                                            <option value="4">4 - Orta Yüksek</option>
-                                            <option value="5">5 - Yüksek</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-section">
-                                <h5 class="mb-4"><i class="fas fa-star me-2"></i>Ek Özellikler</h5>
-                                
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="sqrt_m2" class="form-label">
-                                            Metrekare (m²)
-                                        </label>
-                                        <input type="number" class="form-control" id="sqrt_m2" required min="0">
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <label for="totalrooms" class="form-label">
-                                            Oda Sayısı
-                                        </label>
-                                        <input type="number" class="form-control" id="totalrooms" required min="1">
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <label for="bathroom_count" class="form-label">
-                                            Banyo Sayısı
-                                        </label>
-                                        <input type="number" class="form-control" id="bathroom_count" required min="1">
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <label for="luxury_score" class="form-label">
-                                            Lüks Puanı (1-10)
-                                        </label>
-                                        <input type="number" class="form-control" id="luxury_score" min="1" max="10" value="5">
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="furnished">
-                                            <label class="form-check-label" for="furnished">
-                                                Mobilyalı
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="air_conditioning" checked>
-                                            <label class="form-check-label" for="air_conditioning">
-                                                Klima
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="has_balcony" checked>
-                                            <label class="form-check-label" for="has_balcony">
-                                                Balkon
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="text-center mt-4">
-                                <button type="submit" class="btn btn-predict">
-                                    <i class="fas fa-calculator me-2"></i>Fiyat Tahmini Yap
-                                </button>
-                            </div>
-                        </form>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">Özellikleri Girin</h5>
+                        <button type="button" class="btn btn-sm btn-outline-primary fw-bold" id="fillExampleBtn"><i class="fas fa-magic me-1"></i>Demo Veri</button>
                     </div>
+                    
+                    <form id="pricePredictionForm">
+                        <div class="form-section">
+                            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-building text-secondary me-2"></i>Temel Bilgiler</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Metrekare (m²)</label>
+                                    <input type="number" class="form-control" id="m2" required min="30">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Oda Sayısı</label>
+                                    <input type="number" class="form-control" id="totalrooms" required min="1">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Banyo Sayısı</label>
+                                    <input type="number" class="form-control" id="bathroom_count" required min="1">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Lokasyon Skoru (1-10)</label>
+                                    <input type="number" class="form-control" id="location_score" required min="1" max="10" value="6">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-star text-warning me-2"></i>Ekstra Donanımlar</h6>
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="form-label">Lüks Endeksi (1-10)</label>
+                                    <input type="number" class="form-control" id="luxury_score" min="1" max="10" value="5">
+                                </div>
+                                <div class="col-md-4 mt-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="furnished"><label class="form-check-label fw-bold" for="furnished">Mobilyalı</label></div></div>
+                                <div class="col-md-4 mt-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="air_conditioning" checked><label class="form-check-label fw-bold" for="air_conditioning">Klima</label></div></div>
+                                <div class="col-md-4 mt-3"><div class="form-check"><input class="form-check-input" type="checkbox" id="has_balcony" checked><label class="form-check-label fw-bold" for="has_balcony">Balkon</label></div></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-predict w-100 mt-2">Fiyatı Hesapla <i class="fas fa-arrow-right ms-2"></i></button>
+                    </form>
                 </div>
             </div>
             
-            <!-- Results Column -->
-            <div class="col-lg-6">
-                <div class="prediction-card">
-                    <div class="card-body">
-                        <h4 class="mb-4"><i class="fas fa-chart-pie me-2"></i>Tahmin Sonuçları</h4>
-                        
-                        <div id="predictionResult" style="display: none;">
-                            <div class="result-section">
-                                <h5 class="text-center mb-3">Tahmini Emlak Değeri</h5>
-                                <div class="predicted-price" id="predictedPrice">0 TL</div>
-                                <div class="text-center text-muted mb-4">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    <span id="predictionDate">Tahmin tarihi: </span>
-                                </div>
-                                
-                                <div class="chart-container">
-                                    <canvas id="featureImportanceChart" class="feature-importance"></canvas>
-                                </div>
-                                
-                                <div class="alert alert-info mt-4">
-                                    <h5><i class="fas fa-lightbulb me-2"></i>Tahmin Analizi</h5>
-                                    <hr>
-                                    <p id="priceAnalysisText">Fiyat tahmini, güncel piyasa verileri ve makine öğrenmesi algoritmaları kullanılarak hesaplanmıştır.</p>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-4">
-                                <h5 class="mb-3"><i class="fas fa-exchange-alt me-2"></i>Bölge Karşılaştırması</h5>
-                                <div class="chart-container">
-                                    <canvas id="comparisonChart" class="comparison-chart"></canvas>
-                                </div>
+            <div class="col-lg-7">
+                <div class="prediction-card d-flex flex-column">
+                    <h5 class="fw-bold mb-4">Değerleme Sonucu</h5>
+                    
+                    <div id="predictionResult" style="display: none; flex-grow: 1;">
+                        <div class="result-box">
+                            <p class="text-uppercase fw-bold text-muted mb-1" style="font-size: 0.85rem;">Tahmini Satış Değeri</p>
+                            <div class="predicted-price" id="predictedPrice">0 ₺</div>
+                            <div class="d-flex justify-content-center mt-3">
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-3 py-2 fs-6">
+                                    <i class="fas fa-arrow-trend-up me-2"></i>Tahmini Kira: <span id="estimatedRent" class="fw-bold">0 ₺</span> / ay
+                                </span>
                             </div>
                         </div>
                         
-                        <div id="noPrediction" class="text-center py-5">
-                            <i class="fas fa-chart-line fa-4x text-muted mb-4"></i>
-                            <h5>Henüz tahmin yapılmadı</h5>
-                            <p class="text-muted">Lütfen sol taraftaki formu doldurup "Fiyat Tahmini Yap" butonuna tıklayın</p>
+                        <div class="alert alert-light border mt-4">
+                            <p id="priceAnalysisText" class="small text-muted mb-0">Model hesaplama bilgileri...</p>
                         </div>
+                        
+                        <div class="mt-4 pt-3 border-top" id="similarByInput" style="display:none;">
+                            <h5 class="fw-bold mb-3 text-dark"><i class="fas fa-layer-group text-primary me-2"></i>Benzer İlan Önerileri</h5>
+                            <div id="similarList" class="row g-3"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="noPrediction" class="text-center my-auto py-5">
+                        <i class="fas fa-search-dollar fa-4x text-muted mb-4 opacity-25"></i>
+                        <h5 class="fw-bold text-dark">Sonuç Bekleniyor</h5>
+                        <p class="text-muted small">Sol taraftaki özellikleri doldurup hesapla butonuna basın.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner">
-            <i class="fas fa-spinner fa-spin fa-4x mb-3"></i>
-            <h4 id="loadingText">Tahmin yapılıyor...</h4>
-        </div>
+        <div class="text-center"><div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div><h5 class="fw-bold text-dark">Hesaplanıyor...</h5></div>
     </div>
     
-    <!-- Scripts -->
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Initialize charts
-        let featureImportanceChart, comparisonChart;
-        
-        function initCharts() {
-            const featureCtx = document.getElementById('featureImportanceChart').getContext('2d');
-            featureImportanceChart = new Chart(featureCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['m² × Lokasyon', 'm² Fiyatı', 'Oda Yoğunluğu', 'Lokasyon', 'Metrekare', 'Oda Sayısı'],
-                    datasets: [{
-                        label: 'Özellik Önemi',
-                        data: [0, 0, 0, 0, 0, 0],
-                        backgroundColor: '#667eea',
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.raw.toFixed(2);
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Önem Puanı'
-                            }
-                        }
-                    }
-                }
-            });
-            
-            const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
-            comparisonChart = new Chart(comparisonCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Tahmininiz', 'Bölge Ort.', 'Benzer Özellikler'],
-                    datasets: [{
-                        label: 'm² Fiyatı (TL)',
-                        data: [0, 0, 0],
-                        backgroundColor: [
-                            'rgba(102, 126, 234, 0.7)',
-                            'rgba(75, 192, 192, 0.7)',
-                            'rgba(153, 102, 255, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(102, 126, 234, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.raw.toFixed(2) + ' TL/m²';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'm² Fiyatı (TL)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Form submission
         $(document).ready(function() {
-    initCharts();
-    
-    // ÖNE ÇIKAN EKLEME: Örnek veriler butonunu ekle
-    function addExampleButton() {
-        const exampleButton = `
-            <div class="text-center mt-3 mb-3" id="exampleButtonContainer">
-                <button type="button" class="btn btn-outline-info btn-custom" id="fillExampleBtn">
-                    <i class="fas fa-magic me-2"></i>Örnek Verilerle Doldur
-                </button>
-                <small class="d-block text-muted mt-2">Test için hazır değerler yükler</small>
-            </div>
-        `;
-        
-        // Form submit buttonunun üstüne ekle
-        $('.text-center:has(button[type="submit"])').before(exampleButton);
-    }
-    
-    // Örnek değerleri set etme fonksiyonu
-    function setExampleValues() {
-        $('#m2_location_interact').val('36.22');
-        $('#price_per_m2').val('83739');
-        $('#room_density').val('14.00');
-        $('#location_tier').val('4');
-        $('#sqrt_m2').val('120');
-        $('#totalrooms').val('3');
-        $('#bathroom_count').val('2');
-        $('#luxury_score').val('7');
-        $('#furnished').prop('checked', true);
-        $('#air_conditioning').prop('checked', true);
-        $('#has_balcony').prop('checked', true);
-        
-        // Formu güncelle (validation için)
-        $('#pricePredictionForm').find('input, select').trigger('change');
-    }
-    
-    // Butonları ekle
-    addExampleButton();
-    
-    // Örnek buton click handler
-    $('#fillExampleBtn').on('click', function() {
-        setExampleValues();
-        
-        // Buton animasyonu
-        $(this).html('<i class="fas fa-check me-2"></i>Veriler Yüklendi!')
-               .removeClass('btn-outline-info')
-               .addClass('btn-success')
-               .prop('disabled', true);
-        
-        setTimeout(() => {
-            $(this).html('<i class="fas fa-magic me-2"></i>Örnek Verilerle Doldur')
-                   .removeClass('btn-success')
-                   .addClass('btn-outline-info')
-                   .prop('disabled', false);
-        }, 2500);
-        
-        // Kullanıcıya bilgi ver
-        const alertHtml = `
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <i class="fas fa-info-circle me-2"></i>
-                Örnek veriler başarıyla yüklendi. Şimdi "Fiyat Tahmini Yap" butonuna tıklayabilirsiniz.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        `;
-        
-        $('.prediction-card .card-body').prepend(alertHtml);
-        
-        // 5 saniye sonra alert'i kaldır
-        setTimeout(() => {
-            $('.alert').fadeOut();
-        }, 5000);
-    });
+            function setExampleValues() {
+                $('#m2').val('120'); $('#totalrooms').val('3'); $('#bathroom_count').val('2');
+                $('#location_score').val('8'); $('#luxury_score').val('7');
+                $('#furnished').prop('checked', true); $('#air_conditioning').prop('checked', true); $('#has_balcony').prop('checked', true);
+            }
+            
+            $('#fillExampleBtn').on('click', function() {
+                setExampleValues();
+                $(this).html('<i class="fas fa-check me-1"></i>Dolduruldu');
+                setTimeout(() => { $(this).html('<i class="fas fa-magic me-1"></i>Demo Veri'); }, 2000);
+            });
             
             $('#pricePredictionForm').on('submit', function(e) {
                 e.preventDefault();
+                const m2 = parseFloat($('#m2').val());
+                if (m2 < 30 || m2 > 1000) { alert('⚠️ Metrekare 30-1000 arasında olmalıdır'); return; }
+                const totalrooms = parseInt($('#totalrooms').val());
+                if (totalrooms < 1 || totalrooms > 10) { alert('⚠️ Oda sayısı 1-10 arasında olmalıdır'); return; }
                 
-                // Show loading overlay
-                $('#loadingOverlay').show();
+                $('#loadingOverlay').css('display', 'flex');
                 
-                // Prepare data
                 const formData = {
-                    m2_location_interact: parseFloat($('#m2_location_interact').val()),
-                    price_per_m2: parseFloat($('#price_per_m2').val()),
-                    room_density: parseFloat($('#room_density').val()),
-                    location_tier: parseInt($('#location_tier').val()),
-                    sqrt_m2: parseFloat($('#sqrt_m2').val()),
-                    totalrooms: parseInt($('#totalrooms').val()),
-                    bathroom_count: parseInt($('#bathroom_count').val()),
-                    luxury_score: parseInt($('#luxury_score').val()),
-                    Furnished: $('#furnished').is(':checked') ? 1 : 0,
-                    Air_conditioning: $('#air_conditioning').is(':checked') ? 1 : 0,
+                    m2: m2, totalrooms: totalrooms, bathroom_count: parseInt($('#bathroom_count').val()),
+                    location_score: parseFloat($('#location_score').val()), luxury_score: parseInt($('#luxury_score').val()),
+                    Furnished: $('#furnished').is(':checked') ? 1 : 0, Air_conditioning: $('#air_conditioning').is(':checked') ? 1 : 0,
                     has_balcony: $('#has_balcony').is(':checked') ? 1 : 0
                 };
                 
-                // Simulate API call (replace with actual AJAX call)
-                setTimeout(function() {
-                    // Mock response
-                    const mockResponse = {
-                        status: 'success',
-                        predicted_price: Math.round(formData.price_per_m2 * formData.sqrt_m2 * (0.9 + Math.random() * 0.2)),
-                        feature_importance: [
-                            Math.random() * 10,
-                            Math.random() * 8,
-                            Math.random() * 6,
-                            Math.random() * 4,
-                            Math.random() * 3,
-                            Math.random() * 2
-                        ],
-                        comparison_data: [
-                            formData.price_per_m2,
-                            formData.price_per_m2 * (0.8 + Math.random() * 0.4),
-                            formData.price_per_m2 * (0.9 + Math.random() * 0.2)
-                        ],
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    displayResults(mockResponse);
-                    $('#loadingOverlay').hide();
-                }, 1500);
-                
-                // Actual AJAX call would look like this:
-                /*
                 $.ajax({
-                    url: '/api/predict-price',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(formData),
-                    success: function(response) {
-                        displayResults(response);
-                        $('#loadingOverlay').hide();
-                    },
-                    error: function(xhr) {
-                        alert('Hata: ' + xhr.responseJSON.error);
-                        $('#loadingOverlay').hide();
-                    }
+                    url: '/api/predict-price', type: 'POST', contentType: 'application/json', data: JSON.stringify(formData),
+                    success: function(response) { displayResults(response); $('#loadingOverlay').hide(); },
+                    error: function(xhr) { alert('Hata: ' + (xhr.responseJSON?.error || 'Bilinmeyen hata')); $('#loadingOverlay').hide(); }
                 });
-                */
-            });
-            
-            // Tooltip initialization
-            $('[title]').tooltip({
-                trigger: 'hover',
-                placement: 'top'
             });
         });
         
-        // Display results
         function displayResults(data) {
-            if (data.status !== 'success') {
-                alert('Tahmin yapılırken bir hata oluştu');
-                return;
-            }
-            
-            // Format price
-            const formattedPrice = new Intl.NumberFormat('tr-TR', {
-                style: 'currency',
-                currency: 'TRY'
-            }).format(data.predicted_price);
+            if (data.status !== 'success') { alert('Tahmin yapılırken bir hata oluştu'); return; }
+            const formattedPrice = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits:0 }).format(data.predicted_price);
+            const estimatedRent = Math.round(data.predicted_price / 200);
+            const formattedRent = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits:0 }).format(estimatedRent);
             
             $('#predictedPrice').text(formattedPrice);
-            $('#predictionDate').text('Tahmin tarihi: ' + new Date(data.timestamp).toLocaleString('tr-TR'));
+            $('#estimatedRent').text(formattedRent);
             
-            // Update feature importance chart
-            featureImportanceChart.data.datasets[0].data = data.feature_importance;
-            featureImportanceChart.update();
+            const m2Value = parseFloat($('#m2').val());
+            const pricePerM2 = (data.predicted_price / m2Value).toFixed(0);
+            $('#priceAnalysisText').text(`Algoritma, m² birim fiyatını ${new Intl.NumberFormat('tr-TR').format(pricePerM2)} ₺ olarak belirlemiştir.`);
             
-            // Update comparison chart
-            comparisonChart.data.datasets[0].data = data.comparison_data;
-            comparisonChart.update();
-            
-            // Generate analysis text
-            const pricePerM2 = (data.predicted_price / parseFloat($('#sqrt_m2').val())).toFixed(2);
-            const analysisText = `
-                Tahmini toplam değer: ${formattedPrice} (${pricePerM2} TL/m²). 
-                Bu fiyat, seçtiğiniz özellikler ve bölge ortalaması dikkate alınarak hesaplanmıştır. 
-                ${data.predicted_price > 1000000 ? 'Bu emlak, bölge ortalamasının üzerinde bir değere sahiptir.' : 'Bu emlak, bölge ortalamasına yakın bir değere sahiptir.'}
-            `;
-            
-            $('#priceAnalysisText').text(analysisText);
-            
-            // Show results
             $('#noPrediction').hide();
             $('#predictionResult').show();
+            fetchSimilarByInput();
         }
-        
-        // Sample data button (for demo)
-        $(document).on('click', '#sampleDataBtn', function() {
-            $('#m2_location_interact').val('36.22');
-    $('#price_per_m2').val('83739');
-    $('#room_density').val('14.00');
-    $('#location_tier').val('4');
-    $('#sqrt_m2').val('120');
-    $('#totalrooms').val('3');
-    $('#bathroom_count').val('2');
-    $('#luxury_score').val('7');
-    $('#furnished').prop('checked', true);
-    $('#air_conditioning').prop('checked', true);
-    $('#has_balcony').prop('checked', true);
-        });
+
+        async function fetchSimilarByInput() {
+            try {
+                const body = {
+                    m2: parseFloat($('#m2').val()), totalrooms: parseInt($('#totalrooms').val()), bathroom_count: parseInt($('#bathroom_count').val()),
+                    location_score: parseFloat($('#location_score').val()), luxury_score: parseInt($('#luxury_score').val()),
+                    Furnished: $('#furnished').is(':checked') ? 1 : 0, Air_conditioning: $('#air_conditioning').is(':checked') ? 1 : 0, has_balcony: $('#has_balcony').is(':checked') ? 1 : 0
+                };
+
+                const res = await fetch('/api/recommend-similar-by-input', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                if (!res.ok) return;
+                const payload = await res.json();
+                let recs = (payload && payload.recommendations) ? payload.recommendations : [];
+                recs = recs.slice(0, 2); // Ekrana sığması için en iyi 2 tanesini alalım
+
+                if (recs.length === 0) return;
+
+                // ANA SAYFA TİPİ PREMİUM KART ÜRETİMİ
+                const html = recs.map(r => {
+                    const simPercent = Math.round((r.similarity || 0) * 100);
+                    const priceFmt = new Intl.NumberFormat('tr-TR', {style:'currency', currency:'TRY', maximumFractionDigits:0}).format(r.price || 0);
+                    const imgUrl = r.image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80';
+                    
+                    return `
+                        <div class="col-md-6">
+                            <div class="property-card h-100 d-flex flex-column" onclick="window.location.href='/property/${r.id}'">
+                                <div class="card-img-wrapper">
+                                    <img src="${imgUrl}" class="card-img-top" onerror="this.src='https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80'">
+                                    <div class="badge-match"><i class="fas fa-check-circle me-1"></i>%${simPercent}</div>
+                                </div>
+                                <div class="card-body p-3 d-flex flex-column flex-grow-1">
+                                    <h5 class="fw-bold text-primary mb-1">${priceFmt}</h5>
+                                    <h6 class="text-dark text-truncate mb-2" style="font-size: 0.95rem;">${r.title}</h6>
+                                    <p class="small text-muted mb-2"><i class="fas fa-map-marker-alt text-danger me-1"></i>${r.location}</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top" style="font-size: 0.85rem; color: #475569;">
+                                        <span><i class="fas fa-vector-square me-1"></i>${r.m2} m²</span>
+                                        <span><i class="fas fa-door-open me-1"></i>${r.totalrooms} Oda</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                }).join('');
+                
+                $('#similarList').html(html);
+                $('#similarByInput').show();
+            } catch (e) {}
+        }
     </script>
 </body>
 </html>

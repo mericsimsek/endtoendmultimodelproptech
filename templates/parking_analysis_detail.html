@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ district }} - Park Analizi Detayları</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        body { background: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { background: rgba(44, 62, 80, 0.95) !important; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+        .page-header { background: var(--primary-gradient); color: white; padding: 80px 0 60px; margin-top: 76px; }
+        .stat-card { 
+            background: white; 
+            border-radius: 15px; 
+            padding: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            text-align: center; 
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-number { font-size: 2.5rem; font-weight: bold; margin-bottom: 10px; }
+        .score-excellent { color: #27ae60; }
+        .score-good { color: #3498db; }
+        .score-medium { color: #f39c12; }
+        .score-poor { color: #e74c3c; }
+        .image-card { 
+            background: white; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+            margin-bottom: 20px; 
+            transition: transform 0.3s;
+        }
+        .image-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .image-card img { width: 100%; height: 300px; object-fit: cover; }
+        .image-stats { padding: 15px; background: #f8f9fa; }
+        .badge-score { font-size: 0.9rem; padding: 8px 15px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-car-alt me-2"></i>Akıllı Park & Emlak
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/parking"><i class="fas fa-parking me-1"></i>Park Analizi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/all-properties"><i class="fas fa-building me-1"></i>Tüm İlanlar</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb text-white-50">
+                    <li class="breadcrumb-item"><a href="/parking" class="text-white">Park Analizi</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">{{ district }}</li>
+                </ol>
+            </nav>
+            <h1 class="display-5 fw-bold mb-2">
+                <i class="fas fa-map-marker-alt me-3"></i>{{ district }} Park Analizi
+            </h1>
+            <p class="lead mb-0">YOLO tabanlı otomatik park yeri doluluk analizi sonuçları</p>
+        </div>
+    </section>
+
+    <div class="container mt-5 mb-5">
+        {% if error %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+                <div class="mt-3">
+                    <a href="/parking" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Park Analizi Sayfasına Dön
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <!-- Özet İstatistikler -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        {% set score = summary.park_convenience_score %}
+                        <div class="stat-number {% if score >= 7 %}score-excellent{% elif score >= 5 %}score-good{% elif score >= 3 %}score-medium{% else %}score-poor{% endif %}">
+                            {{ score }}/10
+                        </div>
+                        <div class="text-muted fw-bold">Park Kolaylığı Skoru</div>
+                        <small class="text-muted">Boşluk Oranına Göre</small>
+                        <div class="mt-3">
+                            {% if score >= 7 %}
+                                <span class="badge bg-success badge-score">Mükemmel</span>
+                            {% elif score >= 5 %}
+                                <span class="badge bg-primary badge-score">İyi</span>
+                            {% elif score >= 3 %}
+                                <span class="badge bg-warning badge-score">Orta</span>
+                            {% else %}
+                                <span class="badge bg-danger badge-score">Zor</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number text-primary">{{ summary.total_capacity }}</div>
+                        <div class="text-muted fw-bold">Toplam Kapasite</div>
+                        <small class="text-muted">Park Yeri</small>
+                        <div class="mt-3">
+                            <i class="fas fa-parking fa-2x text-primary opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number text-success">{{ summary.average_empty }}</div>
+                        <div class="text-muted fw-bold">Toplam Boş</div>
+                        <small class="text-muted">Park Yeri</small>
+                        <div class="mt-3">
+                            <i class="fas fa-check-circle fa-2x text-success opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number text-danger">{{ summary.average_occupied }}</div>
+                        <div class="text-muted fw-bold">Toplam Dolu</div>
+                        <small class="text-muted">Park Yeri</small>
+                        <div class="mt-3">
+                            <i class="fas fa-times-circle fa-2x text-danger opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analiz Sonuçları -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-images me-2"></i>Analiz Edilen Görüntüler 
+                                    <span class="badge bg-primary">{{ images|length }} adet</span>
+                                </h4>
+                                {% if summary.last_updated %}
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>Son güncelleme: {{ summary.last_updated[:10] }}
+                                </small>
+                                {% endif %}
+                            </div>
+                            
+                            {% if images %}
+                                <div class="row g-4">
+                                    {% for img in images %}
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="image-card">
+                                            <img src="/{{ img.result_path }}" alt="Analiz Sonucu" 
+                                                 onerror="this.src='/{{ img.original_path }}'">
+                                            <div class="image-stats">
+                                                <div class="row text-center mb-2">
+                                                    <div class="col-4">
+                                                        <div class="fw-bold text-danger fs-5">{{ img.occupied_spots }}</div>
+                                                        <small class="text-muted">Dolu</small>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="fw-bold text-success fs-5">{{ img.empty_spots }}</div>
+                                                        <small class="text-muted">Boş</small>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="fw-bold text-primary fs-5">{{ img.total_spots }}</div>
+                                                        <small class="text-muted">Toplam</small>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Doluluk Oranı Bar -->
+                                                {% if img.total_spots > 0 %}
+                                                    {% set occupancy_percent = (img.occupied_spots / img.total_spots * 100) | round(1) %}
+                                                    <div class="progress" style="height: 8px;">
+                                                        <div class="progress-bar bg-danger" role="progressbar" 
+                                                             data-width="{{ occupancy_percent }}">
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted d-block text-center mt-1">
+                                                        %{{ occupancy_percent }} dolu
+                                                    </small>
+                                                {% endif %}
+                                                
+                                                {% if img.analyzed_at %}
+                                                <div class="text-center mt-2">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-calendar-alt me-1"></i>
+                                                        {{ img.analyzed_at[:16] }}
+                                                    </small>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Henüz analiz edilmiş görüntü bulunmuyor.</strong>
+                                    <p class="mb-0 mt-2">Resim yüklemek için <a href="/parking" class="alert-link">buraya tıklayın</a>.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bilgilendirme -->
+            <div class="card border-info">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-info-circle me-2 text-info"></i>Nasıl Kullanılır?
+                    </h6>
+                    <ol class="mb-0">
+                        <li><strong><a href="/parking">Park Analizi</a></strong> sayfasından <strong>{{ district }}</strong> ilçesini seçip resim yükleyin</li>
+                        <li>Terminal'de <code>python analyze_parking_images.py</code> scriptini çalıştırın</li>
+                        <li>Bu sayfayı yenileyerek güncel sonuçları görün</li>
+                    </ol>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Progress bar width'lerini ayarla
+        document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar) {
+            bar.style.width = bar.getAttribute('data-width') + '%';
+        });
+    </script>
+</body>
+</html>

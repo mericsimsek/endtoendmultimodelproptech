@@ -1,0 +1,58 @@
+# =========================
+# 1. GİZLİ BİLGİLER VE ŞİFRELER
+# =========================
+.env
+.env.local
+secrets.json
+
+# =========================
+# 2. PYTHON VE SİSTEM ÇÖPLERİ
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.DS_Store
+Thumbs.db
+
+# =========================
+# 3. SANAL ORTAM (VIRTUAL ENV)
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# 4. MAKİNE ÖĞRENMESİ MODELLERİ
+# (Büyük boyutlu oldukları için GitHub reddeder)
+# =========================
+models/*.pt
+models/*.pkl
+models/*.h5
+
+# =========================
+# 5. BÜYÜK VERİ SETLERİ
+# =========================
+data/*.csv
+data/*.json
+
+# =========================
+# 6. KULLANICI TEST YÜKLEMELERİ
+# (Senin test ederken yüklediğin resimler gitmesin)
+# =========================
+static/uploads/*
+!static/uploads/.gitkeep
+
+static/results/*
+!static/results/.gitkeep
+
+static/parking_data/**/*.jpg
+static/parking_data/**/*.png
+
+# =========================
+# 7. IDE AYARLARI
+# =========================
+.vscode/
+.idea/

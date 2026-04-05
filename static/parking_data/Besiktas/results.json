@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "park_convenience_score": 3.0,
+    "total_capacity": 30,
+    "average_empty": 9,
+    "average_occupied": 21,
+    "last_updated": "2025-10-19T15:12:31.117193"
+  },
+  "images": [
+    {
+      "original_path": "static/parking_data/Besiktas/images/20251019_123951_GOPR6719_JPG.rf.8e5f170dc4900e60b14d3d15bf69d039.jpg",
+      "result_path": "static/parking_data/Besiktas/results/20251019_123951_GOPR6719_JPG.rf.8e5f170dc4900e60b14d3d15bf69d039_result.jpg",
+      "occupied_spots": 21,
+      "empty_spots": 9,
+      "total_spots": 30,
+      "analyzed_at": "2025-10-19T15:12:31.116193"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+artifact_path: file:///c:/Users/meric/Desktop/smartcity/mlruns/444607548725567883/models/m-d76e9dcb9dc243babc7ce3a2014fff08/artifacts
+flavors:
+  python_function:
+    data: model.xgb
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.xgboost
+    python_version: 3.11.4
+  xgboost:
+    code: null
+    data: model.xgb
+    model_class: xgboost.sklearn.XGBRegressor
+    model_format: xgb
+    xgb_version: 3.0.3
+mlflow_version: 3.1.4
+model_id: m-d76e9dcb9dc243babc7ce3a2014fff08
+model_size_bytes: 5248777
+model_uuid: m-d76e9dcb9dc243babc7ce3a2014fff08
+prompts: null
+run_id: aa91b991984747e196df6ad244cab660
+utc_time_created: '2025-12-20 11:03:58.991538'

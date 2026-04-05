@@ -3,369 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Akıllı Park & Emlak Sistemi{% endblock %}</title>
+    <title>{% block title %}Akıllı Park & Emlak AI{% endblock %}</title>
     
-    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
+    
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --danger-color: #e74c3c;
-            --dark-color: #34495e;
-            --light-color: #ecf0f1;
+            --tech-dark: #0b1120;
+            --tech-blue: #1e3a8a;
+            --tech-neon: #38bdf8;
+            --tech-purple: #8b5cf6;
+            --card-bg: rgba(255, 255, 255, 0.98);
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: var(--tech-dark);
+            /* Teknolojik Ağ / Işık Hüzmesi Arka Planı */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(30, 58, 138, 0.4), transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.3), transparent 50%),
+                linear-gradient(rgba(11, 17, 32, 0.9), rgba(11, 17, 32, 0.95)),
+                url('https://www.transparenttextures.com/patterns/cubes.png');
+            color: #f8fafc;
             min-height: 100vh;
+            background-attachment: fixed;
         }
 
+        /* Glassmorphism Navbar */
         .navbar {
-            background: rgba(44, 62, 80, 0.95) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            background: rgba(11, 17, 32, 0.8) !important;
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
         }
-
-        .navbar-brand {
-            font-weight: bold;
-            color: #fff !important;
-        }
-
-        .nav-link {
-            color: #ecf0f1 !important;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: #3498db !important;
-            transform: translateY(-2px);
-        }
+        .navbar-brand { font-weight: 800; letter-spacing: 1px; color: #fff !important; }
+        .navbar-brand span { color: var(--tech-neon); }
+        .nav-link { color: #cbd5e1 !important; font-weight: 500; transition: all 0.3s; }
+        .nav-link:hover { color: var(--tech-neon) !important; transform: translateY(-2px); text-shadow: 0 0 10px rgba(56,189,248,0.5); }
 
         .main-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            margin: 20px 0;
-            padding: 30px;
+            margin-top: 100px;
+            margin-bottom: 60px;
         }
 
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-
-        .btn-custom {
-            border-radius: 25px;
-            padding: 12px 30px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary-custom {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border: none;
-            color: white;
-        }
-
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            margin: 0 auto 20px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-        }
-
-        .stats-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .loading-spinner {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .result-container {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            border-left: 5px solid var(--primary-color);
-        }
-
+        /* Modern Footer */
         .footer {
-            background: var(--dark-color);
-            color: var(--light-color);
-            padding: 40px 0;
-            margin-top: 60px;
+            background: rgba(11, 17, 32, 0.95);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: #94a3b8;
+            padding: 30px 0;
+            margin-top: auto;
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 0.6s ease;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-container {
-                margin: 10px;
-                padding: 20px;
-            }
-            
-            .feature-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-            }
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(45deg, #5a6fd8, #6a42a0);
-        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--tech-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--tech-blue); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--tech-neon); }
     </style>
-    {% block extra_css %}{% endblock %}
+    {% block head %}{% endblock %}
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+<body class="d-flex flex-column">
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top py-3">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <i class="fas fa-car-alt me-2"></i>
-                Akıllı Park & Emlak
+                <i class="fas fa-microchip me-2"></i>Akıllı Park <span>& Emlak</span>
             </a>
-            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <i class="fas fa-home me-1"></i>Ana Sayfa
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/parking">
-                            <i class="fas fa-parking me-1"></i>Park Analizi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/price-prediction">
-                            <i class="fas fa-chart-line me-1"></i>Fiyat Tahmini
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/recommendations">
-                            <i class="fas fa-lightbulb me-1"></i>Öneriler
-                        </a>
-                    </li>
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/parking"><i class="fas fa-satellite-dish me-1"></i>Park Analizi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/price-prediction"><i class="fas fa-brain me-1"></i>AI Fiyat Tahmini</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main style="margin-top: 76px;">
-        <div class="container">
-            <div class="main-container fade-in-up">
-                {% block content %}{% endblock %}
-            </div>
-        </div>
+    <main class="main-container flex-grow-1">
+        {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5><i class="fas fa-car-alt me-2"></i>Akıllı Park & Emlak</h5>
-                    <p>AI destekli park yeri analizi ve emlak değerlendirme sistemi.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Özellikler</h5>
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-check me-2"></i>YOLO ile Park Analizi</li>
-                        <li><i class="fas fa-check me-2"></i>Fiyat Tahmini</li>
-                        <li><i class="fas fa-check me-2"></i>Akıllı Öneriler</li>
-                        <li><i class="fas fa-check me-2"></i>Gerçek Zamanlı Analiz</li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>İletişim</h5>
-                    <p><i class="fas fa-envelope me-2"></i>info@akilliparkemlak.com</p>
-                    <p><i class="fas fa-phone me-2"></i>+90 (212) 555-0123</p>
-                    <div class="mt-3">
-                        <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-light me-3"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-            </div>
-            <hr class="my-4">
-            <div class="text-center">
-                <p>&copy; 2024 Akıllı Park & Emlak Sistemi. Tüm hakları saklıdır.</p>
-            </div>
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 Akıllı Park & Emlak Sistemleri. Yapay Zeka ile Güçlendirilmiştir.</p>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-    
-    <!-- Common JavaScript -->
+    {% block scripts %}{% endblock %}
+    <style>
+        /* Chatbot CSS */
+        .chat-widget-btn {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 60px; height: 60px; border-radius: 50%;
+            background: var(--accent-blue); color: white;
+            box-shadow: 0 4px 15px rgba(37,99,235,0.4);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; cursor: pointer; z-index: 1000;
+            transition: all 0.3s ease; border: none;
+        }
+        .chat-widget-btn:hover { transform: scale(1.1); background: #1d4ed8; }
+        
+        .chat-window {
+            position: fixed; bottom: 100px; right: 30px;
+            width: 350px; height: 500px; background: white;
+            border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: none; flex-direction: column; z-index: 1000;
+            border: 1px solid #e2e8f0; overflow: hidden;
+        }
+        .chat-header {
+            background: var(--primary-color); color: white;
+            padding: 15px 20px; font-weight: 600;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-header i.fa-times { cursor: pointer; transition: 0.2s; }
+        .chat-header i.fa-times:hover { color: #f87171; }
+        
+        .chat-body {
+            flex: 1; padding: 15px; overflow-y: auto;
+            background: #f8fafc; display: flex; flex-direction: column; gap: 10px;
+        }
+        
+        .chat-msg { max-width: 85%; padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; line-height: 1.4; }
+        .msg-ai { background: white; color: #1e293b; align-self: flex-start; border: 1px solid #e2e8f0; border-bottom-left-radius: 2px; }
+        .msg-user { background: var(--accent-blue); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        
+        .chat-input-area {
+            padding: 15px; background: white; border-top: 1px solid #e2e8f0;
+            display: flex; gap: 10px;
+        }
+        .chat-input-area input {
+            flex: 1; border: 1px solid #cbd5e1; border-radius: 20px;
+            padding: 8px 15px; outline: none; font-size: 0.9rem;
+        }
+        .chat-input-area input:focus { border-color: var(--accent-blue); }
+        .chat-send-btn {
+            background: var(--accent-blue); color: white; border: none;
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s;
+        }
+        .chat-send-btn:hover { background: #1d4ed8; }
+        .typing-indicator { font-size: 0.8rem; color: #94a3b8; display: none; margin-left: 10px; }
+    </style>
+
+    <button class="chat-widget-btn" id="chatToggleBtn">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <span><i class="fas fa-sparkles me-2 text-warning"></i> Emlak AI Asistanı</span>
+            <i class="fas fa-times" id="chatCloseBtn"></i>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-msg msg-ai">
+                Merhaba! Ben Akıllı Emlak Asistanı. Size fiyat tahmini, park analizleri veya ilan önerileri konusunda nasıl yardımcı olabilirim? 🏡
+            </div>
+        </div>
+        <div class="typing-indicator" id="chatTyping">Asistan yazıyor...</div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Bir soru sorun..." autocomplete="off">
+            <button class="chat-send-btn" id="chatSendBtn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
     <script>
-        // Loading spinner functions
-        function showLoading() {
-            $('.loading-spinner').show();
-        }
-        
-        function hideLoading() {
-            $('.loading-spinner').hide();
-        }
-        
-        // Success/Error message display
-        function showMessage(message, type = 'info') {
-            const alertClass = type === 'error' ? 'alert-danger' : `alert-${type}`;
-            const alertHtml = `
-                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-                    <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-            $('.main-container').prepend(alertHtml);
-            
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-                $('.alert').fadeOut();
-            }, 5000);
-        }
-        
-        // API call wrapper
-        async function apiCall(url, method = 'GET', data = null) {
-            const options = {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            };
-            
-            if (data) {
-                options.body = JSON.stringify(data);
+        $(document).ready(function() {
+            const chatWindow = $('#chatWindow');
+            const chatBody = $('#chatBody');
+            const chatInput = $('#chatInput');
+            const typingIndicator = $('#chatTyping');
+
+            // Chat aç/kapat
+            $('#chatToggleBtn').click(() => { chatWindow.fadeToggle(200); chatInput.focus(); });
+            $('#chatCloseBtn').click(() => chatWindow.fadeOut(200));
+
+            // Mesaj Gönderme
+            function sendMessage() {
+                const text = chatInput.val().trim();
+                if (!text) return;
+
+                // Kullanıcı mesajını ekrana bas
+                chatBody.append(`<div class="chat-msg msg-user">${text}</div>`);
+                chatInput.val('');
+                scrollToBottom();
+
+                // Yükleniyor efekti
+                typingIndicator.show();
+
+                // API'ye istek at
+                $.ajax({
+                    url: '/api/chat',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ message: text }),
+                    success: function(res) {
+                        typingIndicator.hide();
+                        // Markdown/Bold gibi karakterleri basitçe temizle veya HTML'e çevir (İsteğe bağlı)
+                        let replyText = res.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                        chatBody.append(`<div class="chat-msg msg-ai">${replyText}</div>`);
+                        scrollToBottom();
+                    },
+                    error: function() {
+                        typingIndicator.hide();
+                        chatBody.append(`<div class="chat-msg msg-ai text-danger">Bağlantı hatası oluştu.</div>`);
+                        scrollToBottom();
+                    }
+                });
             }
-            
-            try {
-                const response = await fetch(url, options);
-                const result = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(result.error || 'Bir hata oluştu');
-                }
-                
-                return result;
-            } catch (error) {
-                throw error;
+
+            // Enter tuşu ve buton tıklaması
+            $('#chatSendBtn').click(sendMessage);
+            chatInput.keypress(function(e) { if(e.which == 13) sendMessage(); });
+
+            function scrollToBottom() {
+                chatBody.scrollTop(chatBody[0].scrollHeight);
             }
-        }
-        
-        // Format numbers
-        function formatNumber(num, decimals = 2) {
-            return new Intl.NumberFormat('tr-TR', {
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
-            }).format(num);
-        }
-        
-        // Format currency
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('tr-TR', {
-                style: 'currency',
-                currency: 'TRY'
-            }).format(amount);
-        }
-        
-        // Initialize tooltips and popovers
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Bootstrap tooltips
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-            
-            // Initialize Bootstrap popovers
-            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-                return new bootstrap.Popover(popoverTriggerEl);
-            });
         });
     </script>
-    
-    {% block extra_js %}{% endblock %}
 </body>
 </html>

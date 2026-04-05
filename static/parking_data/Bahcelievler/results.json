@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "park_convenience_score": 2.9,
+    "total_capacity": 62,
+    "average_empty": 18,
+    "average_occupied": 44,
+    "last_updated": "2025-10-19T15:12:30.823438"
+  },
+  "images": [
+    {
+      "original_path": "static/parking_data/Bahcelievler/images/20251019_123936_4k-time-lapse-car-parking-lot-stock-video-download-video-clip-now-istock_TyROSAGZ_mp4-19_jpg.rf.af2acc6a2c90fb17f3ed119b14be3eac.jpg",
+      "result_path": "static/parking_data/Bahcelievler/results/20251019_123936_4k-time-lapse-car-parking-lot-stock-video-download-video-clip-now-istock_TyROSAGZ_mp4-19_jpg.rf.af2acc6a2c90fb17f3ed119b14be3eac_result.jpg",
+      "occupied_spots": 44,
+      "empty_spots": 18,
+      "total_spots": 62,
+      "analyzed_at": "2025-10-19T15:12:30.822438"
+    }
+  ]
+}

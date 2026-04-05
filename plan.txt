@@ -1,0 +1,33 @@
+
+
+"""
+ilan detalarına girince park kolaylığı skoru düzgün olacak ve mesela istanbul bağcılara gittiyse
+örnek ona özel otoparkı gösterip onun analizini yapcak 22 boş 3 dolu ve mesela 1 aylık resim olacak
+orada örnek resimler olacak ve tabloda 1 aylık veri ortalamasına göre park kolaylığı skoru 
+hesaplancak 
+
+ilana özel park anaizi sayfasına gidecek bi bölmesinde 30 tane resim olacak kendim yüklediğim
+ve o resimler analiz edilmiş (yoloda tahmin sonrası yaptığı tespit resmini de göstersin şu kadar dolu şu kadar boş kutucukları da
+görelim ayn exp deki gibi) result resimlerim olacak mesela 2 resim için örnek 50 50 kapasite var
+birisnde 20 diğerinde 40 boş yer var burası 60/100 den  6 skoru alacak ve ben veri girdikçe oraya
+özel o skor değişecek (admin olarak)
+
+ve dilersem ilan detayına özel değil de genel bi park analizi yapmak istiyorsam yine manuel
+anasayfada park analizi olacak mnauel veya canlı giriş olabilir
+"""
+
+
+predde daha çeşitlilik olsun il ilçeye göre de fiyat artsın
+
+
+benzerlik skorlarının hepsi ai ile olacak kural tabanlı değil(recommendations ve ilan detayı)
+
+
+ilan benzerlikleri kısmı için daha fazla ilan ekle daha fazla benzerlik sunabilsin 
+ve dbdeki ilanları da geliştir düzelt
+
+
+genel arayüz gelişecek
+
+
+

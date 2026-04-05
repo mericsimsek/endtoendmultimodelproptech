@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detaylı Analizler - Akıllı Park & Emlak</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: rgba(44,62,80,0.95)">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/"><i class="fas fa-car-alt me-2"></i>Akıllı Park & Emlak</a>
+        </div>
+    </nav>
+
+    <section class="py-5" style="margin-top:60px;">
+        <div class="container">
+            <h2 class="mb-4"><i class="fas fa-chart-pie me-2"></i>Detaylı Analizler</h2>
+
+            <div class="row g-4">
+                <div class="col-lg-3 col-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="text-muted">Toplam İlan</div>
+                            <div class="display-6">{{ stats.total }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="text-muted">Satılık</div>
+                            <div class="display-6">{{ stats.sale_count }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="text-muted">Kiralık</div>
+                            <div class="display-6">{{ stats.rent_count }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="text-muted">Ort. m²</div>
+                            <div class="display-6">{{ stats.avg_m2 }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-1">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Ortalama Fiyat ve Kira</h5>
+                            <canvas id="avgChart" height="120"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Bölgesel Örnek Dağılımı</h5>
+                            <canvas id="regionChart" height="120"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+        const avgCtx = document.getElementById('avgChart').getContext('2d');
+        new Chart(avgCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Ortalama Satış', 'Ortalama Kira'],
+                datasets: [{
+                    label: 'TL',
+                    data: [{{ stats.avg_price }}, {{ stats.avg_rent }}],
+                    backgroundColor: ['rgba(102,126,234,0.6)','rgba(67,233,123,0.6)']
+                }]
+            },
+            options: {responsive: true, scales: {y: {beginAtZero: true}}}
+        });
+
+        const regionCtx = document.getElementById('regionChart').getContext('2d');
+        new Chart(regionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Premium', 'Orta-Üst', 'Orta', 'Orta-Alt', 'Ekonomik'],
+                datasets: [{
+                    data: [20, 25, 30, 15, 10],
+                    backgroundColor: ['#4c6ef5','#15aabf','#51cf66','#fcc419','#ff6b6b']
+                }]
+            }
+        });
+    });
+    </script>
+</body>
+</html>
+

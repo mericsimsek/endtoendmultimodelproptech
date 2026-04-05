@@ -3,980 +3,435 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Park Yeri Analizi - YOLO Sistemi</title>
+    <title>Park Yeri Analizi - Akıllı Park & Emlak</title>
     
-    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        /* Modern Aydınlık / Mavi Tema */
+        :root { 
+            --bg-color: #f8fafc; 
+            --primary-color: #1e293b; 
+            --accent-blue: #2563eb; 
+            --card-bg: #ffffff; 
+            --border-color: #e2e8f0; 
         }
+        body { font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--primary-color); }
+        
+        .navbar { background: rgba(255, 255, 255, 0.95) !important; backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); padding: 15px 0; }
+        .navbar-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary-color) !important; }
+        .navbar-brand i { color: var(--accent-blue); }
+        .nav-link { color: #475569 !important; font-weight: 600; margin: 0 10px; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-blue) !important; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-        }
+        .page-header { background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); padding: 120px 0 50px; border-bottom: 1px solid var(--border-color); }
 
-        .navbar {
-            background: rgba(44, 62, 80, 0.95) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
+        .main-card { background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); overflow: hidden; margin-bottom: 25px; }
+        
+        /* Drag & Drop Alanı */
+        .upload-area { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 50px 20px; text-align: center; transition: all 0.3s ease; background: #f8fafc; cursor: pointer; }
+        .upload-area:hover, .upload-area.dragover { border-color: var(--accent-blue); background: #eff6ff; }
+        .upload-icon { font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 15px; opacity: 0.8; }
 
-        .page-header {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 80px 0 60px;
-            margin-top: 76px;
-        }
+        .stat-item { text-align: center; padding: 25px; background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid var(--border-color); transition: all 0.3s ease; height: 100%;}
+        .stat-item:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 2.5rem; font-weight: 800; margin-bottom: 5px; letter-spacing: -1px; }
 
-        .main-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: none;
-            overflow: hidden;
-        }
+        .btn-custom { border-radius: 8px; padding: 12px 25px; font-weight: 600; transition: all 0.3s ease; }
+        .btn-primary-custom { background: var(--accent-blue); color: white; border: none; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
+        .btn-primary-custom:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); color: white; }
 
-        .upload-area {
-            border: 3px dashed #ddd;
-            border-radius: 15px;
-            padding: 60px 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-            cursor: pointer;
-        }
-
-        .upload-area:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .upload-area.dragover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 4rem;
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-
-        .camera-controls {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
-
-        .result-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            border-left: 5px solid #667eea;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 20px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .stat-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .stat-occupied { color: #e74c3c; }
-        .stat-empty { color: #27ae60; }
-        .stat-total { color: #3498db; }
-        .stat-rate { color: #f39c12; }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .loading-spinner {
-            color: white;
-            text-align: center;
-        }
-
-        .image-preview {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .btn-custom {
-            border-radius: 25px;
-            padding: 12px 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary-custom {
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-        }
-
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-success-custom {
-            background: var(--success-gradient);
-            border: none;
-            color: white;
-        }
-
-        .btn-danger-custom {
-            background: var(--warning-gradient);
-            border: none;
-            color: white;
-        }
-
-        .progress-custom {
-            height: 6px;
-            border-radius: 10px;
-            background: #f1f3f4;
-        }
-
-        .progress-bar-custom {
-            background: var(--primary-gradient);
-            border-radius: 10px;
-        }
-
-        /* Chart container */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 20px 0;
-        }
-
-        /* Camera status indicator */
-        .camera-status {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .status-online { background: #27ae60; }
-        .status-offline { background: #e74c3c; }
-
-        /* History table */
-        .history-table {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        @media (max-width: 768px) {
-            .page-header {
-                padding: 60px 0 40px;
-            }
-            
-            .upload-area {
-                padding: 40px 15px;
-            }
-            
-            .upload-icon {
-                font-size: 3rem;
-            }
-        }
+        .district-select-box { background: #f8fafc; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; }
+        .district-badge { display: inline-block; padding: 8px 16px; margin: 5px; background: white; border: 1px solid #e2e8f0; border-radius: 50px; font-weight: 600; color: #475569; text-decoration: none; transition: all 0.3s ease; }
+        .district-badge:hover { background: var(--accent-blue); color: white; border-color: var(--accent-blue); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(37,99,235,0.2); }
+        
+        .camera-controls { background: #1e293b; color: white; padding: 25px; border-radius: 16px; margin-bottom: 25px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fas fa-car-alt me-2"></i>Akıllı Park & Emlak
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <a class="navbar-brand" href="/"><i class="fas fa-home"></i> Akıllı Park & Emlak</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars text-dark"></i>
             </button>
-            
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Ana Sayfa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/parking"><i class="fas fa-parking me-1"></i>Park Analizi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/price-prediction"><i class="fas fa-chart-line me-1"></i>Fiyat Tahmini</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/recommendations"><i class="fas fa-lightbulb me-1"></i>Öneriler</a>
-                    </li>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/">Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/parking">Park Analizi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/price-prediction">Fiyat Tahmini</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/recommendations">Öneriler</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Page Header -->
     <section class="page-header">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-3">
-                        <i class="fas fa-parking me-3"></i>Park Yeri Analizi
-                    </h1>
-                    <p class="lead mb-0">
-                        YOLO algoritması ile gerçek zamanlı park yeri doluluk analizi ve istatistik üretimi
-                    </p>
-                </div>
-                <div class="col-lg-4 text-lg-end">
-                    <div class="d-inline-block">
-                        <span class="camera-status" id="cameraStatus"></span>
-                        <span id="cameraStatusText">Kamera Durumu</span>
-                    </div>
+                    <h1 class="display-5 fw-bold mb-3 text-dark"><i class="fas fa-parking text-primary me-2"></i>Park Yeri Analizi</h1>
+                    <p class="lead mb-0 text-muted">YOLO algoritması ile gerçek zamanlı park yeri doluluk analizi.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Main Content -->
-    <div class="container mt-5">
-        <!-- Camera Controls -->
-        <!-- Camera Controls bölümünde kaldığınız yerden devam -->
-<div class="camera-controls">
-    <div class="row align-items-center">
-        <div class="col-md-8">
-            <h4 class="mb-2"><i class="fas fa-video me-2"></i>Kamera Kontrolü</h4>
-            <p class="mb-0">YOLO modeli ile gerçek zamanlı park yeri analizi</p>
-        </div>
-        <div class="col-md-4 text-md-end">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-success-custom btn-custom" id="startCamera">
-                    <i class="fas fa-play me-2"></i>Başlat
-                </button>
-                <button type="button" class="btn btn-danger-custom btn-custom" id="stopCamera">
-                    <i class="fas fa-stop me-2"></i>Durdur
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Upload/Camera Section -->
-<div class="row">
-    <div class="col-lg-8">
-        <div class="main-card">
-            <div class="card-body p-4">
-                <!-- Upload Area -->
-                <div id="uploadArea" class="upload-area">
-                    <div class="upload-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <h4 class="mb-3">Park Alanı Görüntüsü Yükleyin</h4>
-                    <p class="text-muted mb-4">Sürükle-bırak veya tıklayarak görüntü yükleyin</p>
-                    <input type="file" id="fileInput" class="d-none" accept="image/*">
-                    <button type="button" class="btn btn-primary-custom btn-custom" onclick="document.getElementById('fileInput').click()">
-                        <i class="fas fa-folder-open me-2"></i>Dosya Seç
-                    </button>
-                </div>
-                
-                <!-- Camera Feed -->
-                <div id="cameraFeed" class="d-none text-center">
-                    <video id="videoElement" class="img-fluid rounded" style="max-height: 400px;" autoplay></video>
-                    <div class="mt-3">
-                        <button type="button" class="btn btn-primary-custom btn-custom" id="captureBtn">
-                            <i class="fas fa-camera me-2"></i>Fotoğraf Çek
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Image Preview -->
-                <div id="imagePreview" class="d-none mt-4">
-                    <img id="previewImg" class="image-preview">
-                    <div class="mt-3">
-                        <button type="button" class="btn btn-primary-custom btn-custom" id="analyzeBtn">
-                            <i class="fas fa-search me-2"></i>Analiz Et
-                        </button>
-                        <button type="button" class="btn btn-secondary btn-custom ms-2" id="clearBtn">
-                            <i class="fas fa-trash me-2"></i>Temizle
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Loading -->
-                <div id="loadingSection" class="d-none text-center py-5">
-                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
-                    <h5>YOLO Analizi Yapılıyor...</h5>
-                    <p class="text-muted">Lütfen bekleyiniz</p>
-                </div>
-                
-                <!-- Results -->
-                <div id="resultsSection" class="d-none">
-                    <h4 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Analiz Sonuçları</h4>
-                    <div id="analyzedImage" class="mb-4 text-center">
-                        <!-- İşlenmiş görüntü buraya gelecek -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Statistics Column -->
-    <div class="col-lg-4">
-        <div class="row g-3">
-            <div class="col-12">
-                <div class="stat-item">
-                    <div class="stat-number stat-occupied" id="occupiedSpots">0</div>
-                    <div>Dolu Park Yeri</div>
-                    <small class="text-muted">Tespit Edilen</small>
-                </div>
-            </div>
-            
-            <div class="col-12">
-                <div class="stat-item">
-                    <div class="stat-number stat-empty" id="emptySpots">0</div>
-                    <div>Boş Park Yeri</div>
-                    <small class="text-muted">Kullanılabilir</small>
-                </div>
-            </div>
-            
-            <div class="col-12">
-                <div class="stat-item">
-                    <div class="stat-number stat-total" id="totalSpots">0</div>
-                    <div>Toplam Park Yeri</div>
-                    <small class="text-muted">Toplam Kapasite</small>
-                </div>
-            </div>
-            
-            <div class="col-12">
-                <div class="stat-item">
-                    <div class="stat-number stat-rate" id="occupancyRate">0%</div>
-                    <div>Doluluk Oranı</div>
-                    <small class="text-muted">Anlık Oran</small>
-                </div>
-            </div>
-        </div>
+    <div class="container mt-5 mb-5">
         
-        <!-- Chart -->
-        <div class="mt-4">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title">Günlük İstatistikler</h6>
-                    <div class="chart-container">
-                        <canvas id="dailyStatsChart"></canvas>
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="main-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-map-marked-alt text-primary me-2"></i>İlçe Bazlı Resim Yükleme (Admin)</h5>
+                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#adminUploadSection">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="collapse show" id="adminUploadSection">
+                            <div class="district-select-box mb-3">
+                                <label class="form-label fw-bold"><i class="fas fa-building me-2 text-muted"></i>İlçe Seçin:</label>
+                                <select class="form-select form-select-lg mb-3" id="districtSelect">
+                                    <option value="">-- İlçe Seçiniz --</option>
+                                    <option value="Bagcilar">Bağcılar</option><option value="Kadıköy">Kadıköy</option>
+                                    <option value="Besiktas">Beşiktaş</option><option value="Sisli">Şişli</option>
+                                    <option value="Uskudar">Üsküdar</option><option value="Sariyer">Sarıyer</option>
+                                    <option value="Bakirkoy">Bakırköy</option><option value="Esenyurt">Esenyurt</option>
+                                    <option value="Bahcelievler">Bahçelievler</option><option value="Umraniye">Ümraniye</option>
+                                </select>
+                                
+                                <label class="form-label fw-bold"><i class="fas fa-image me-2 text-muted"></i>Park Alanı Görseli:</label>
+                                <input type="file" class="form-control form-control-lg mb-3" id="districtFileInput" accept="image/*">
+                                
+                                <button type="button" class="btn btn-primary-custom btn-custom w-100" id="uploadDistrictBtn">İlçeye Yükle ve Kaydet</button>
+                            </div>
+                            <div id="uploadResult"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="main-card p-4">
+                    <h5 class="mb-3 fw-bold"><i class="fas fa-check-circle me-2 text-success"></i>Mevcut Analizler</h5>
+                    <div id="districtList">
+                        <div class="text-center py-3"><div class="spinner-border text-primary"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="camera-controls">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-1 fw-bold"><i class="fas fa-video me-2"></i>Canlı Kamera Analizi</h5>
+                    <p class="mb-0 small text-white-50">Webcam üzerinden anlık test gerçekleştirin.</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <button type="button" class="btn btn-success fw-bold" id="startCamera"><i class="fas fa-play me-1"></i> Başlat</button>
+                    <button type="button" class="btn btn-danger fw-bold ms-2" id="stopCamera"><i class="fas fa-stop me-1"></i> Durdur</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="main-card p-4 h-100">
+                    <div id="uploadArea" class="upload-area">
+                        <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <h5 class="fw-bold">Tek Seferlik Hızlı Analiz</h5>
+                        <p class="text-muted small">Test etmek için görsel yükleyin</p>
+                        <input type="file" id="fileInput" class="d-none" accept="image/*">
+                        <button type="button" class="btn btn-outline-primary fw-bold mt-2" onclick="document.getElementById('fileInput').click()">Dosya Seç</button>
+                    </div>
+                    
+                    <div id="cameraFeed" class="d-none text-center">
+                        <video id="videoElement" class="img-fluid rounded mb-3 shadow-sm" style="max-height: 400px; width: 100%; object-fit: cover;" autoplay></video>
+                        <button type="button" class="btn btn-primary-custom fw-bold" id="captureBtn"><i class="fas fa-camera me-1"></i> Fotoğraf Çek</button>
+                    </div>
+                    
+                    <div id="imagePreview" class="d-none text-center">
+                        <img id="previewImg" class="img-fluid rounded mb-3 shadow-sm" style="max-height: 400px; object-fit: contain;">
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-primary-custom fw-bold" id="analyzeBtn"><i class="fas fa-search me-1"></i> Analiz Et</button>
+                            <button type="button" class="btn btn-outline-secondary fw-bold ms-2" id="clearBtn">Temizle</button>
+                        </div>
+                    </div>
+                    
+                    <div id="loadingSection" class="d-none text-center py-5">
+                        <div class="spinner-border text-primary mb-3"></div>
+                        <h6 class="fw-bold text-dark">YOLO Analizi Yapılıyor...</h6>
+                        <p class="text-muted small">Görüntü işleniyor, lütfen bekleyin.</p>
+                    </div>
+                    
+                    <div id="resultsSection" class="d-none mt-4">
+                        <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">İşlenmiş Görüntü</h5>
+                        <div id="analyzedImage" class="text-center"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="row g-3">
+                    <div class="col-6 col-lg-12">
+                        <div class="stat-item">
+                            <div class="stat-number text-danger" id="occupiedSpots">0</div>
+                            <div class="fw-bold text-dark">Dolu</div>
+                            <small class="text-muted">Tespit Edilen</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-12">
+                        <div class="stat-item">
+                            <div class="stat-number text-success" id="emptySpots">0</div>
+                            <div class="fw-bold text-dark">Boş</div>
+                            <small class="text-muted">Kullanılabilir</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-12">
+                        <div class="stat-item">
+                            <div class="stat-number text-primary" id="totalSpots">0</div>
+                            <div class="fw-bold text-dark">Kapasite</div>
+                            <small class="text-muted">Toplam Alan</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-12">
+                        <div class="stat-item">
+                            <div class="stat-number text-warning" id="occupancyRate">0%</div>
+                            <div class="fw-bold text-dark">Doluluk</div>
+                            <small class="text-muted">Anlık Oran</small>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Bu JavaScript'i sayfanın sonuna ekleyin -->
-<script>
-let currentStream = null;
-let dailyChart = null;
+    <script>
+    let currentStream = null; 
+    let selectedFile = null;
 
-// Sayfa yüklendiğinde
-$(document).ready(function() {
-    initializePage();
-    setupEventListeners();
-    updateCameraStatus(false);
-});
+    $(document).ready(async function() {
+        setupEventListeners(); 
+        loadAvailableDistricts();
+    });
 
-function initializePage() {
-    // Chart'ı başlat
-    const ctx = document.getElementById('dailyStatsChart').getContext('2d');
-    dailyChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['09:00', '11:00', '13:00', '15:00', '17:00', '19:00'],
-            datasets: [{
-                label: 'Doluluk Oranı (%)',
-                data: [45, 62, 78, 85, 70, 55],
-                borderColor: '#667eea',
-                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100
-                }
+    function setupEventListeners() {
+        // Dosya Seçimi
+        $('#fileInput').on('change', handleFileSelect);
+        
+        // Sürükle Bırak İşlemleri
+        $('#uploadArea').on('dragover', function(e) { 
+            e.preventDefault(); 
+            $(this).addClass('dragover'); 
+        });
+        
+        $('#uploadArea').on('dragleave', function(e) { 
+            $(this).removeClass('dragover'); 
+        });
+        
+        $('#uploadArea').on('drop', function(e) {
+            e.preventDefault(); 
+            $(this).removeClass('dragover');
+            if (e.originalEvent.dataTransfer.files.length > 0) {
+                handleFile(e.originalEvent.dataTransfer.files[0]);
             }
-        }
-    });
-}
-
-function setupEventListeners() {
-    // File input
-    $('#fileInput').on('change', handleFileSelect);
-    
-    // Drag & Drop
-    $('#uploadArea').on('dragover', function(e) {
-        e.preventDefault();
-        $(this).addClass('dragover');
-    });
-    
-    $('#uploadArea').on('dragleave', function(e) {
-        $(this).removeClass('dragover');
-    });
-    
-    $('#uploadArea').on('drop', function(e) {
-        e.preventDefault();
-        $(this).removeClass('dragover');
+        });
         
-        const files = e.originalEvent.dataTransfer.files;
-        if (files.length > 0) {
-            handleFile(files[0]);
+        // Buton Dinleyicileri
+        $('#startCamera').on('click', startCamera); 
+        $('#stopCamera').on('click', stopCamera);
+        $('#captureBtn').on('click', captureImage); 
+        $('#analyzeBtn').on('click', analyzeImage);
+        $('#clearBtn').on('click', clearAll); 
+        $('#uploadDistrictBtn').on('click', uploadImageWithDistrict);
+    }
+
+    async function loadAvailableDistricts() {
+        try {
+            const res = await fetch('/api/available-districts');
+            const data = await res.json();
+            const container = $('#districtList'); 
+            
+            container.empty();
+            
+            if (data.districts && data.districts.length > 0) {
+                data.districts.forEach(d => {
+                    container.append(`
+                        <a href="${d.url}" class="district-badge">
+                            <i class="fas fa-map-marker-alt me-1 text-danger"></i>${d.name}
+                        </a>
+                    `);
+                });
+            } else {
+                container.html(`<div class="alert alert-light border small mb-0">Henüz analiz edilmiş ilçe yok. Admin panelinden yükleme yapabilirsiniz.</div>`);
+            }
+        } catch (e) {
+            console.error("İlçeler yüklenemedi", e);
         }
-    });
-    
-    // Buttons
-    $('#startCamera').on('click', startCamera);
-    $('#stopCamera').on('click', stopCamera);
-    $('#captureBtn').on('click', captureImage);
-    $('#analyzeBtn').on('click', analyzeImage);
-    $('#clearBtn').on('click', clearAll);
-}
-
-function handleFileSelect(e) {
-    const file = e.target.files[0];
-    if (file) {
-        handleFile(file);
     }
-}
 
-function handleFile(file) {
-    if (!file.type.match('image.*')) {
-        alert('Lütfen geçerli bir görüntü dosyası seçin');
-        return;
+    async function uploadImageWithDistrict() {
+        const district = $('#districtSelect').val(); 
+        const fileInput = $('#districtFileInput')[0];
+        
+        if (!district || !fileInput.files.length) { 
+            alert('Lütfen hem ilçe seçin hem de resim yükleyin.'); 
+            return; 
+        }
+        
+        const formData = new FormData(); 
+        formData.append('file', fileInput.files[0]); 
+        formData.append('district', district);
+        
+        $('#uploadDistrictBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Yükleniyor...');
+        
+        try {
+            const res = await fetch('/api/upload-parking-with-district', { 
+                method: 'POST', 
+                body: formData 
+            });
+            const result = await res.json();
+            
+            if (res.ok) {
+                $('#uploadResult').html(`<div class="alert alert-success mt-3 mb-0"><i class="fas fa-check-circle me-1"></i> ${result.message}</div>`);
+                fileInput.value = ''; 
+                $('#districtSelect').val(''); 
+                loadAvailableDistricts();
+            } else {
+                $('#uploadResult').html(`<div class="alert alert-danger mt-3 mb-0"><i class="fas fa-exclamation-triangle me-1"></i> ${result.error}</div>`);
+            }
+        } catch (e) {
+            console.error("Yükleme hatası", e);
+            $('#uploadResult').html(`<div class="alert alert-danger mt-3 mb-0"><i class="fas fa-exclamation-triangle me-1"></i> Sunucuya ulaşılamadı.</div>`);
+        } finally { 
+            $('#uploadDistrictBtn').prop('disabled', false).html('İlçeye Yükle ve Kaydet'); 
+        }
     }
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        showImagePreview(e.target.result);
-    };
-    reader.readAsDataURL(file);
-}
 
-function showImagePreview(src) {
-    $('#previewImg').attr('src', src);
-    $('#uploadArea').hide();
-    $('#imagePreview').removeClass('d-none');
-}
-
-async function startCamera() {
-    try {
-        currentStream = await navigator.mediaDevices.getUserMedia({ video: true });
-        $('#videoElement')[0].srcObject = currentStream;
-        $('#uploadArea').hide();
-        $('#cameraFeed').removeClass('d-none');
-        updateCameraStatus(true);
-    } catch (error) {
-        alert('Kamera erişimi reddedildi: ' + error.message);
+    function handleFileSelect(e) { 
+        if (e.target.files[0]) {
+            handleFile(e.target.files[0]); 
+        }
     }
-}
 
-function stopCamera() {
-    if (currentStream) {
-        currentStream.getTracks().forEach(track => track.stop());
-        currentStream = null;
-    }
-    $('#cameraFeed').addClass('d-none');
-    $('#uploadArea').show();
-    updateCameraStatus(false);
-}
-
-function captureImage() {
-    const video = $('#videoElement')[0];
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0);
-    
-    const dataURL = canvas.toDataURL('image/png');
-    showImagePreview(dataURL);
-    stopCamera();
-}
-
-function analyzeImage() {
-    const imgSrc = $('#previewImg').attr('src');
-    if (!imgSrc) return;
-    
-    $('#imagePreview').hide();
-    $('#loadingSection').removeClass('d-none');
-    
-    // Mock analiz (gerçekte API'ye gönderilecek)
-    setTimeout(() => {
-        // Mock sonuçlar
-        const mockResults = {
-            occupied: Math.floor(Math.random() * 20) + 10,
-            empty: Math.floor(Math.random() * 15) + 5,
-            total: 0,
-            occupancyRate: 0,
-            processedImage: imgSrc // Gerçekte işlenmiş görüntü olacak
+    function handleFile(file) {
+        if (!file.type.match('image.*')) {
+            alert('Lütfen geçerli bir resim dosyası seçin.');
+            return;
+        }
+        
+        selectedFile = file;
+        const reader = new FileReader();
+        
+        reader.onload = function(e) { 
+            $('#previewImg').attr('src', e.target.result); 
+            $('#uploadArea').hide(); 
+            $('#imagePreview').removeClass('d-none'); 
         };
         
-        mockResults.total = mockResults.occupied + mockResults.empty;
-        mockResults.occupancyRate = ((mockResults.occupied / mockResults.total) * 100).toFixed(1);
-        
-        displayResults(mockResults);
-        
-        $('#loadingSection').addClass('d-none');
-        $('#resultsSection').removeClass('d-none');
-    }, 2000);
-}
-
-function displayResults(results) {
-    // İstatistikleri güncelle
-    $('#occupiedSpots').text(results.occupied);
-    $('#emptySpots').text(results.empty);
-    $('#totalSpots').text(results.total);
-    $('#occupancyRate').text(results.occupancyRate + '%');
-    
-    // İşlenmiş görüntüyü göster
-    $('#analyzedImage').html(`
-        <img src="${results.processedImage}" class="img-fluid rounded" alt="Analiz Sonucu">
-        <div class="mt-3">
-            <div class="alert alert-info">
-                <h6><i class="fas fa-info-circle me-2"></i>Analiz Tamamlandı</h6>
-                <p class="mb-0">YOLO algoritması ile ${results.total} park yeri tespit edildi. 
-                ${results.occupied} tanesi dolu, ${results.empty} tanesi boş durumda.</p>
-            </div>
-        </div>
-    `);
-}
-
-function updateCameraStatus(isOnline) {
-    if (isOnline) {
-        $('#cameraStatus').removeClass('status-offline').addClass('status-online');
-        $('#cameraStatusText').text('Kamera Aktif');
-    } else {
-        $('#cameraStatus').removeClass('status-online').addClass('status-offline');
-        $('#cameraStatusText').text('Kamera Pasif');
+        reader.readAsDataURL(file);
     }
-}
 
-function clearAll() {
-    $('#imagePreview').addClass('d-none');
-    $('#resultsSection').addClass('d-none');
-    $('#uploadArea').show();
-    $('#fileInput').val('');
-    
-    // İstatistikleri sıfırla
-    $('#occupiedSpots, #emptySpots, #totalSpots').text('0');
-    $('#occupancyRate').text('0%');
-}
-</script>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Akıllı Park & Emlak Sistemi{% endblock %}</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --danger-color: #e74c3c;
-            --dark-color: #34495e;
-            --light-color: #ecf0f1;
+    async function startCamera() {
+        try {
+            currentStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            $('#videoElement')[0].srcObject = currentStream;
+            $('#uploadArea').hide(); 
+            $('#cameraFeed').removeClass('d-none');
+        } catch (e) { 
+            alert('Kamera erişimi reddedildi veya kamera bulunamadı: ' + e.message); 
         }
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+    function stopCamera() {
+        if (currentStream) { 
+            currentStream.getTracks().forEach(t => t.stop()); 
+            currentStream = null; 
         }
+        $('#cameraFeed').addClass('d-none'); 
+        $('#uploadArea').show();
+    }
 
-        .navbar {
-            background: rgba(44, 62, 80, 0.95) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
-
-        .navbar-brand {
-            font-weight: bold;
-            color: #fff !important;
-        }
-
-        .nav-link {
-            color: #ecf0f1 !important;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: #3498db !important;
-            transform: translateY(-2px);
-        }
-
-        .main-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            margin: 20px 0;
-            padding: 30px;
-        }
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-
-        .btn-custom {
-            border-radius: 25px;
-            padding: 12px 30px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary-custom {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border: none;
-            color: white;
-        }
-
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            margin: 0 auto 20px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-        }
-
-        .stats-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .loading-spinner {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .result-container {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            border-left: 5px solid var(--primary-color);
-        }
-
-        .footer {
-            background: var(--dark-color);
-            color: var(--light-color);
-            padding: 40px 0;
-            margin-top: 60px;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 0.6s ease;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-container {
-                margin: 10px;
-                padding: 20px;
-            }
-            
-            .feature-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-            }
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(45deg, #5a6fd8, #6a42a0);
-        }
-    </style>
-    {% block extra_css %}{% endblock %}
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-car-alt me-2"></i>
-                Akıllı Park & Emlak
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <i class="fas fa-home me-1"></i>Ana Sayfa
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/parking">
-                            <i class="fas fa-parking me-1"></i>Park Analizi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/price-prediction">
-                            <i class="fas fa-chart-line me-1"></i>Fiyat Tahmini
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/recommendations">
-                            <i class="fas fa-lightbulb me-1"></i>Öneriler
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main style="margin-top: 76px;">
-        <div class="container">
-            <div class="main-container fade-in-up">
-                {% block content %}{% endblock %}
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5><i class="fas fa-car-alt me-2"></i>Akıllı Park & Emlak</h5>
-                    <p>AI destekli park yeri analizi ve emlak değerlendirme sistemi.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Özellikler</h5>
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-check me-2"></i>YOLO ile Park Analizi</li>
-                        <li><i class="fas fa-check me-2"></i>Fiyat Tahmini</li>
-                        <li><i class="fas fa-check me-2"></i>Akıllı Öneriler</li>
-                        <li><i class="fas fa-check me-2"></i>Gerçek Zamanlı Analiz</li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>İletişim</h5>
-                    <p><i class="fas fa-envelope me-2"></i>info@akilliparkemlak.com</p>
-                    <p><i class="fas fa-phone me-2"></i>+90 (212) 555-0123</p>
-                    <div class="mt-3">
-                        <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-light me-3"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-            </div>
-            <hr class="my-4">
-            <div class="text-center">
-                <p>&copy; 2024 Akıllı Park & Emlak Sistemi. Tüm hakları saklıdır.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-    
-    <!-- Common JavaScript -->
-    <script>
-        // Loading spinner functions
-        function showLoading() {
-            $('.loading-spinner').show();
-        }
+    function captureImage() {
+        const video = $('#videoElement')[0]; 
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth; 
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
         
-        function hideLoading() {
-            $('.loading-spinner').hide();
-        }
+        const dataURL = canvas.toDataURL('image/png');
+        $('#previewImg').attr('src', dataURL); 
         
-        // Success/Error message display
-        function showMessage(message, type = 'info') {
-            const alertClass = type === 'error' ? 'alert-danger' : `alert-${type}`;
-            const alertHtml = `
-                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-                    <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-            $('.main-container').prepend(alertHtml);
-            
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-                $('.alert').fadeOut();
-            }, 5000);
-        }
+        $('#uploadArea').hide(); 
+        $('#cameraFeed').addClass('d-none'); 
+        $('#imagePreview').removeClass('d-none');
         
-        // API call wrapper
-        async function apiCall(url, method = 'GET', data = null) {
-            const options = {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            };
-            
-            if (data) {
-                options.body = JSON.stringify(data);
-            }
-            
-            try {
-                const response = await fetch(url, options);
-                const result = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(result.error || 'Bir hata oluştu');
-                }
-                
-                return result;
-            } catch (error) {
-                throw error;
-            }
-        }
+        stopCamera();
         
-        // Format numbers
-        function formatNumber(num, decimals = 2) {
-            return new Intl.NumberFormat('tr-TR', {
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
-            }).format(num);
-        }
-        
-        // Format currency
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('tr-TR', {
-                style: 'currency',
-                currency: 'TRY'
-            }).format(amount);
-        }
-        
-        // Initialize tooltips and popovers
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Bootstrap tooltips
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
+        // DataURL'i Dosyaya çevirip backend'e hazırla
+        fetch(dataURL)
+            .then(res => res.arrayBuffer())
+            .then(buf => { 
+                selectedFile = new File([new Uint8Array(buf)], `cam_${Date.now()}.png`, { type: 'image/png' }); 
             });
-            
-            // Initialize Bootstrap popovers
-            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-                return new bootstrap.Popover(popoverTriggerEl);
+    }
+
+    async function analyzeImage() {
+        if (!selectedFile) {
+            alert("Lütfen önce bir resim seçin veya çekin.");
+            return;
+        }
+        
+        $('#imagePreview').addClass('d-none'); 
+        $('#loadingSection').removeClass('d-none');
+        
+        const formData = new FormData(); 
+        formData.append('file', selectedFile);
+        
+        try {
+            const res = await fetch('/api/upload-parking', { 
+                method: 'POST', 
+                body: formData 
             });
-        });
+            const result = await res.json();
+            
+            if (!res.ok) throw new Error(result.error);
+            
+            const a = result.analysis || {};
+            
+            // Sonuçları Güncelle
+            $('#occupiedSpots').text(a.occupied_spots || 0); 
+            $('#emptySpots').text(a.empty_spots || 0);
+            $('#totalSpots').text(a.total_spots || 0); 
+            $('#occupancyRate').text((a.occupancy_rate || 0) + '%');
+            
+            // Resmi Ekrana Bas
+            $('#analyzedImage').html(`<img src="${result.result || $('#previewImg').attr('src')}" class="img-fluid rounded shadow-sm border">`);
+            $('#resultsSection').removeClass('d-none');
+            
+        } catch (err) { 
+            alert('Hata oluştu: ' + err.message); 
+            $('#imagePreview').removeClass('d-none'); // Hata olursa resmi geri göster
+        } finally { 
+            $('#loadingSection').addClass('d-none'); 
+        }
+    }
+
+    function clearAll() {
+        $('#imagePreview, #resultsSection').addClass('d-none'); 
+        $('#uploadArea').show();
+        $('#fileInput').val(''); 
+        selectedFile = null;
+        $('#occupiedSpots, #emptySpots, #totalSpots').text('0'); 
+        $('#occupancyRate').text('0%');
+    }
     </script>
-    
-    {% block extra_js %}{% endblock %}
 </body>
 </html>

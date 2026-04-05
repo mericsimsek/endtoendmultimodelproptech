@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "park_convenience_score": 4.6,
+    "total_capacity": 39,
+    "average_empty": 18,
+    "average_occupied": 21,
+    "last_updated": "2025-10-19T15:30:12.279772"
+  },
+  "images": [
+    {
+      "original_path": "static/parking_data/Esenyurt/images/20251019_152112_3_png.rf.1b6f8baf436a1195b41f67eec9283fd3.jpg",
+      "result_path": "static/parking_data/Esenyurt/results/20251019_152112_3_png.rf.1b6f8baf436a1195b41f67eec9283fd3_result.jpg",
+      "occupied_spots": 21,
+      "empty_spots": 18,
+      "total_spots": 39,
+      "analyzed_at": "2025-10-19T15:30:12.279772"
+    }
+  ]
+}

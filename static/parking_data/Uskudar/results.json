@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "park_convenience_score": 6.6,
+    "total_capacity": 64,
+    "average_empty": 42,
+    "average_occupied": 22,
+    "last_updated": "2025-10-19T15:12:31.873211"
+  },
+  "images": [
+    {
+      "original_path": "static/parking_data/Uskudar/images/20251018_180026_6fc8010abf6f5f846adf1260252c3736.jpg",
+      "result_path": "static/parking_data/Uskudar/results/20251018_180026_6fc8010abf6f5f846adf1260252c3736_result.jpg",
+      "occupied_spots": 22,
+      "empty_spots": 42,
+      "total_spots": 64,
+      "analyzed_at": "2025-10-19T15:12:31.872211"
+    }
+  ]
+}

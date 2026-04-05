@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/meric/Desktop/smartcity/mlruns/444607548725567883/aa91b991984747e196df6ad244cab660/artifacts
+end_time: 1766228656881
+entry_point_name: ''
+experiment_id: '444607548725567883'
+lifecycle_stage: active
+run_id: aa91b991984747e196df6ad244cab660
+run_name: magnificent-croc-845
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766228636027
+status: 3
+tags: []
+user_id: meric

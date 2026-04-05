@@ -1,0 +1,75 @@
+{
+  "summary": {
+    "park_convenience_score": 6.2,
+    "total_capacity": 45,
+    "average_empty": 28,
+    "average_occupied": 17,
+    "last_updated": "2025-10-19T15:30:13.290444"
+  },
+  "images": [
+    {
+      "original_path": "static/parking_data/Kadiköy/images/20250929114652_camera_1759135610290.jpg",
+      "result_path": "static/parking_data/Kadiköy/results/results10/20250929114652_camera_1759135610290.jpg",
+      "occupied_spots": 8,
+      "empty_spots": 12,
+      "total_spots": 20,
+      "analyzed_at": "2025-09-29T11:46:52.000000"
+    },
+    {
+      "original_path": "static/parking_data/Kadiköy/images/20250929114715_8-Copy-Copy_jpg.rf.c241425e16b778cf7777ffa759664db3.jpg",
+      "result_path": "static/parking_data/Kadiköy/results/results11/20250929114715_8-Copy-Copy_jpg.rf.c241425e16b778cf7777ffa759664db3.jpg",
+      "occupied_spots": 5,
+      "empty_spots": 15,
+      "total_spots": 20,
+      "analyzed_at": "2025-09-29T11:47:15.000000"
+    },
+    {
+      "original_path": "static/parking_data/Kadiköy/images/20251013164727_6fc8010abf6f5f846adf1260252c3736.jpg",
+      "result_path": "static/parking_data/Kadiköy/results/results12/20251013164727_6fc8010abf6f5f846adf1260252c3736.jpg",
+      "occupied_spots": 3,
+      "empty_spots": 17,
+      "total_spots": 20,
+      "analyzed_at": "2025-10-13T16:47:27.000000"
+    },
+    {
+      "original_path": "static/parking_data/Kadiköy/images/20251015130055_img55_149_jpg.rf.1eda04e20af420bc4ea852c7239530af.jpg",
+      "result_path": "static/parking_data/Kadiköy/results/results13/20251015130055_img55_149_jpg.rf.1eda04e20af420bc4ea852c7239530af.jpg",
+      "occupied_spots": 7,
+      "empty_spots": 13,
+      "total_spots": 20,
+      "analyzed_at": "2025-10-15T13:00:55.000000"
+    },
+    {
+      "original_path": "static/parking_data/Kadiköy/images/20251015145911_view-from-window-from-above-on-a-parking-of-cars-which-in-snow-2X33844.jpg",
+      "result_path": "static/parking_data/Kadiköy/results/results14/20251015145911_view-from-window-from-above-on-a-parking-of-cars-which-in-snow-2X33844.jpg",
+      "occupied_spots": 4,
+      "empty_spots": 16,
+      "total_spots": 20,
+      "analyzed_at": "2025-10-15T14:59:11.000000"
+    },
+    {
+      "original_path": "static/parking_data/Kadiköy/images/20251015153630_SGC-Camera-3-3WEB.jpg",
+      "result_path": "static/parking_data/Kadiköy/results/results15/20251015153630_SGC-Camera-3-3WEB.jpg",
+      "occupied_spots": 6,
+      "empty_spots": 14,
+      "total_spots": 20,
+      "analyzed_at": "2025-10-15T15:36:30.000000"
+    },
+    {
+      "original_path": "static/parking_data/Kadiköy/images/20251016144540_6fc8010abf6f5f846adf1260252c3736.jpg",
+      "result_path": "static/parking_data/Kadiköy/results/results16/20251016144540_6fc8010abf6f5f846adf1260252c3736.jpg",
+      "occupied_spots": 9,
+      "empty_spots": 11,
+      "total_spots": 20,
+      "analyzed_at": "2025-10-16T14:45:40.000000"
+    },
+    {
+      "original_path": "static/parking_data/Kadiköy/images/20251017184008_Tel_Aviv_parking_lot.jpg",
+      "result_path": "static/parking_data/Kadiköy/results/results17/20251017184008_Tel_Aviv_parking_lot.jpg",
+      "occupied_spots": 2,
+      "empty_spots": 18,
+      "total_spots": 20,
+      "analyzed_at": "2025-10-17T18:40:08.000000"
+    }
+  ]
+}

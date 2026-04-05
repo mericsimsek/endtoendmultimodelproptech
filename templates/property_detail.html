@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İlan Detayı - Akıllı Park & Emlak</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { 
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+        }
+        body { background: var(--bg-color); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { background: rgba(44, 62, 80, 0.98) !important; backdrop-filter: blur(10px); }
+        
+        /* Premium Hero Görsel Alanı */
+        .property-hero {
+            margin-top: 56px;
+            height: 50vh;
+            min-height: 400px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.85)), 
+                        url('{{ property_data.get("image", "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600") }}') center/cover no-repeat;
+            display: flex;
+            align-items: flex-end;
+            color: white;
+            padding-bottom: 2rem;
+        }
+        
+        /* Şık Kart Tasarımları */
+        .glass-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        /* Fiyat Etiketi */
+        .price-highlight {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+        }
+        
+        /* Mini İstatistik Kutuları */
+        .stat-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        .stat-box i { font-size: 1.5rem; color: var(--primary-color); margin-bottom: 10px; }
+        .stat-box .value { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); }
+        
+        /* Skor Barları */
+        .score-row { display: flex; align-items: center; margin-bottom: 15px; }
+        .score-label { width: 120px; font-weight: 600; color: #555; }
+        .progress-custom { height: 8px; border-radius: 10px; flex-grow: 1; background-color: #e9ecef; margin: 0 15px; }
+        .score-value { width: 40px; font-weight: bold; text-align: right; }
+        
+        /* Özellik Rozetleri */
+        .feature-badge {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        
+        /* Sağ Sabit Kolon */
+        .sticky-sidebar { position: sticky; top: 90px; }
+
+        /* AI Öneri Kartı CSS'i */
+        .premium-rec-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            background: #fff;
+            border: 1px solid #eee;
+            cursor: pointer;
+        }
+        .premium-rec-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .premium-rec-img { width: 100%; height: 160px; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/"><i class="fas fa-car-alt me-2"></i>Akıllı Park & Emlak</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/recommendations">Öneriler</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/parking">Park Analizi</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="property-hero">
+        <div class="container">
+            <div class="row align-items-end">
+                <div class="col-lg-8">
+                    <span class="badge bg-primary mb-2 px-3 py-2 fs-6 rounded-pill">Satılık</span>
+                    <h1 class="display-5 fw-bold mb-2">{{ property_data.get('title') or 'Prestijli Konut' }}</h1>
+                    <p class="fs-5 mb-0 text-light"><i class="fas fa-map-marker-alt text-danger me-2"></i>{{ property_data.get('location', 'Konum bilgisi yok') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5 mb-5">
+        {% if error %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+            </div>
+        {% else %}
+        <div class="row g-4">
+            <div class="col-lg-8">
+                
+                <div class="glass-card">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2">Genel Bakış</h5>
+                    <div class="row g-3">
+                        {% set m2_val = property_data.get('m2') %}
+                        {% if m2_val is not none and m2_val > 0 %}
+                        <div class="col-4 col-md-3">
+                            <div class="stat-box">
+                                <i class="fas fa-vector-square"></i>
+                                <div class="value">{{ '{:,.0f}'.format(m2_val) }}</div>
+                                <div class="text-muted small">m² (Brüt)</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="col-4 col-md-3">
+                            <div class="stat-box">
+                                <i class="fas fa-door-open"></i>
+                                <div class="value">{{ property_data.get('totalrooms', 0) }}</div>
+                                <div class="text-muted small">Oda Sayısı</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-4 col-md-3">
+                            <div class="stat-box">
+                                <i class="fas fa-bath"></i>
+                                <div class="value">{{ property_data.get('bathroom_count', 0) }}</div>
+                                <div class="text-muted small">Banyo</div>
+                            </div>
+                        </div>
+
+                        {% set price_val = property_data.get('price') %}
+                        {% if price_val is not none and m2_val is not none and m2_val > 0 %}
+                            {% set ppm2 = (price_val | float) / (m2_val | float) %}
+                            <div class="col-12 col-md-3">
+                                <div class="stat-box">
+                                    <i class="fas fa-tag"></i>
+                                    <div class="value fs-6">{{ '{:,.0f}'.format(ppm2) }} ₺</div>
+                                    <div class="text-muted small">m² Fiyatı</div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2">Donanım ve Özellikler</h5>
+                    <div>
+                        {% if property_data.get('Furnished') %}
+                            <span class="feature-badge"><i class="fas fa-couch text-primary me-1"></i> Eşyalı</span>
+                        {% endif %}
+                        {% if property_data.get('Air conditioning') or property_data.get('Air_conditioning') %}
+                            <span class="feature-badge"><i class="fas fa-wind text-info me-1"></i> Klima</span>
+                        {% endif %}
+                        {% if property_data.get('has_balcony') %}
+                            <span class="feature-badge"><i class="fas fa-sun text-warning me-1"></i> Balkon</span>
+                        {% endif %}
+                        {% if property_data.get('has_garden') %}
+                            <span class="feature-badge"><i class="fas fa-tree text-success me-1"></i> Bahçe</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="glass-card mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                        <h5 class="fw-bold mb-0"><i class="fas fa-magic text-primary me-2"></i>AI Benzer İlan Önerileri</h5>
+                        <span class="badge bg-dark rounded-pill" id="recCount">Yükleniyor...</span>
+                    </div>
+                    <div id="recommendationsContainer">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="text-muted mt-3">Yapay zeka portföyü tarıyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="sticky-sidebar">
+                    
+                    <div class="glass-card bg-primary text-white text-center pb-4">
+                        <p class="text-uppercase mb-1 opacity-75 small fw-bold">İstenen Fiyat</p>
+                        {% if price_val is not none and price_val > 0 %}
+                            <div class="price-highlight mb-3">{{ '{:,.0f}'.format(price_val) }} ₺</div>
+                            <div class="d-flex justify-content-between bg-white bg-opacity-10 rounded p-3 mb-3">
+                                <span><i class="fas fa-key me-2"></i>Tahmini Aylık Kira:</span>
+                                <span class="fw-bold text-warning">{{ '{:,.0f}'.format(price_val / 200) }} ₺</span>
+                            </div>
+                        {% else %}
+                            <div class="price-highlight mb-3">Fiyat Belirtilmemiş</div>
+                        {% endif %}
+                        <button class="btn btn-light text-primary fw-bold w-100 py-2">Satıcıyla İletişime Geç</button>
+                    </div>
+
+                    <div class="glass-card">
+                        <h5 class="fw-bold mb-4 border-bottom pb-2"><i class="fas fa-chart-pie text-secondary me-2"></i>AI Skorları</h5>
+                        
+                        <div class="score-row">
+                            <div class="score-label">Lokasyon</div>
+                            <div class="progress progress-custom">
+                                {% set l_score = property_data.get('location_score', 0) | float %}
+                                {% set l_width = ((l_score / 10) * 100) | round | int %}
+                                <div class="progress-bar bg-success" style="width: {{ l_width }}%;"></div>
+                            </div>
+                            <div class="score-value text-success">{{ property_data.get('location_score', '-') }}</div>
+</div>
+
+                        <div class="score-row">
+                            <div class="score-label">Lüks Seviyesi</div>
+                            <div class="progress progress-custom">
+                                {% set lux_score = property_data.get('luxury_score_final', 0) | float %}
+                                {% set lux_width = ((lux_score / 10) * 100) | round | int %}
+                                <div class="progress-bar bg-info" style="width: {{ lux_width }}%;"></div>
+                            </div>
+                            <div class="score-value text-info">{{ property_data.get('luxury_score_final', '-') }}</div>
+</div>
+
+                        {% if property_data.get('parking_score') %}
+                        <div class="score-row">
+                            <div class="score-label">Park Kolaylığı</div>
+                            <div class="progress progress-custom">
+                                {% set p_score = property_data.get('parking_score') | float %}
+                                {% set p_width = ((p_score / 10) * 100) | round | int %}
+                                {% set p_color = 'bg-success' if p_score >= 7 else ('bg-warning' if p_score >= 4 else 'bg-danger') %}
+                                <div class="progress-bar {{ p_color }}" style="width: {{ p_width }}%;"></div>
+                            </div>
+                            <div class="score-value">{{ property_data.get('parking_score', '-') }}</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="mt-4 pt-3 border-top">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold mb-0"><i class="fas fa-camera text-danger me-1"></i> Bölge Park Analizi</h6>
+                                {% if property_data.get('district') %}
+                                <a href="/parking-analysis/{{ property_data.district }}" class="text-decoration-none small">Tümü</a>
+                                {% endif %}
+                            </div>
+                            
+                            <div id="parkingAnalysisContainer">
+                                <div class="text-center text-muted py-3">
+                                    <div class="spinner-border spinner-border-sm mb-2 text-primary" role="status"></div>
+                                    <p class="small mb-0">Drone görüntüleri analiz ediliyor...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // SENİN ORİJİNAL JAVASCRIPT KODLARIN (HİÇBİR EKSİLTME YAPILMADI, SADECE HTML GÜNCELLENDİ)
+        const propertyId = "{{ property_data.get('id', '') }}";
+        const propertyDistrict = "{{ property_data.get('district', '') }}";
+
+        $(document).ready(function() {
+            console.log('🏠 Property Detail Page Loaded');
+            console.log('Property ID:', propertyId);
+            console.log('District:', propertyDistrict);
+            
+            // 1. AI Önerilerini Yükle
+            loadAIRecommendations();
+            
+            // 2. Park Analizlerini Yükle (İlçeye özel)
+            if (propertyDistrict && propertyDistrict.trim() !== '') {
+                loadDistrictParkingAnalyses(propertyDistrict);
+            } else {
+                // İlçe bilgisi yoksa varsayılan ilçelerden birini dene
+                const defaultDistricts = ['Kadıköy', 'Kadikoy', 'Bagcilar', 'Besiktas', 'Sisli', 'Uskudar', 'Sariyer', 'Esenyurt', 'Bahcelievler'];
+                loadDefaultParkingAnalyses(defaultDistricts);
+            }
+        });
+
+        // Öneri için Park Analizi Yükle
+        async function loadParkingAnalysisForRecommendation(rec) {
+            try {
+                const district = rec.district || '';
+                if (!district) {
+                    return ``; // Premium tasarımda boşsa gizle
+                }
+                
+                const response = await fetch(`/api/district-parking-analyses/${district}?limit=1`);
+                if (!response.ok) { return ``; }
+                
+                const data = await response.json();
+                const analyses = data.analyses || [];
+                
+                if (analyses.length === 0) { return ``; }
+                
+                // Rastgele bir analiz seç
+                const randomAnalysis = analyses[Math.floor(Math.random() * analyses.length)];
+                const occupancyPercent = randomAnalysis.total_spots > 0 
+                    ? Math.round((randomAnalysis.occupied_spots / randomAnalysis.total_spots) * 100) 
+                    : 0;
+                
+                // Kolaylık skoru hesapla (boşluk oranına göre)
+                const vacancyRate = randomAnalysis.empty_spots / randomAnalysis.total_spots;
+                const easeScore = Math.round(vacancyRate * 10);
+                
+                return `
+                    <div class="mt-2 border-top pt-2">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted"><i class="fas fa-parking me-1"></i>Park Kolaylığı</small>
+                            <small class="fw-bold ${easeScore >= 7 ? 'text-success' : easeScore >= 4 ? 'text-warning' : 'text-danger'}">${easeScore}/10</small>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-danger" style="width: ${occupancyPercent}%"></div>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Park analysis error for recommendation:', error);
+                return ``;
+            }
+        }
+
+        // AI Önerilerini Yükle
+        async function loadAIRecommendations() {
+            try {
+                const response = await fetch(`/api/get-recommendations/${propertyId}?weight_location=0.3&weight_luxury=0.2&max_price_diff=0.3&n=6`);
+                
+                if (!response.ok) throw new Error('Öneri alınamadı');
+                
+                const data = await response.json();
+                const recommendations = data.recommendations || [];
+                
+                $('#recCount').text(`${recommendations.length} İlan`);
+                
+                if (recommendations.length === 0) {
+                    $('#recommendationsContainer').html(`
+                        <div class="alert alert-warning">
+                            <i class="fas fa-info-circle me-2"></i>Benzer ilan bulunamadı
+                        </div>
+                    `);
+                    return;
+                }
+                
+                let html = '<div class="row g-3">';
+                for (const rec of recommendations) {
+                    const similarityPercent = Math.round((rec.similarity || 0) * 100);
+                    
+                    // Her öneri için park analizi yükle (Senin orijinal await mantığın)
+                    const parkingAnalysis = await loadParkingAnalysisForRecommendation(rec);
+                    
+                    // ŞIK TASARIMLI KART HTML'İ
+                    html += `
+                        <div class="col-md-6 col-lg-6">
+                            <div class="premium-rec-card h-100" onclick="window.location.href='/property/${rec.id}'">
+                                <div class="position-relative">
+                                    <img src="${rec.image || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80'}" class="premium-rec-img" onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80'" alt="${rec.title}">
+                                    <div class="position-absolute top-0 start-0 m-2">
+                                        <span class="badge bg-success bg-opacity-75 shadow-sm">${similarityPercent}% Benzer</span>
+                                    </div>
+                                </div>
+                                <div class="p-3">
+                                    <h5 class="fw-bold text-primary mb-1">${new Intl.NumberFormat('tr-TR', {style:'currency', currency:'TRY', maximumFractionDigits:0}).format(rec.price)}</h5>
+                                    <p class="text-truncate fw-bold mb-1 text-dark" style="font-size:0.9rem;">${rec.title}</p>
+                                    <p class="small text-muted mb-2"><i class="fas fa-map-marker-alt me-1"></i>${rec.location}</p>
+                                    <div class="d-flex justify-content-between text-muted small mb-1">
+                                        <span><i class="fas fa-vector-square me-1"></i>${rec.m2} m²</span>
+                                        <span><i class="fas fa-door-open me-1"></i>${rec.totalrooms} Oda</span>
+                                    </div>
+                                    ${parkingAnalysis}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                html += '</div>';
+                
+                $('#recommendationsContainer').html(html);
+                
+            } catch (error) {
+                console.error('AI recommendation error:', error);
+                $('#recommendationsContainer').html(`
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Öneriler yüklenirken hata oluştu
+                    </div>
+                `);
+            }
+        }
+
+        // Varsayılan İlçelerden Park Analizi Yükle
+        async function loadDefaultParkingAnalyses(districts) {
+            for (const district of districts) {
+                try {
+                    console.log(`🔍 Trying default district: ${district}`);
+                    const response = await fetch(`/api/district-parking-analyses/${district}?limit=10`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        let analyses = data.analyses || [];
+                        
+                        if (analyses.length > 0) {
+                            console.log(`✅ Found ${analyses.length} analyses for default district: ${district}`);
+                            
+                            // RASTGELE BİR ANALİZ SEÇ
+                            const randomAnalysis = analyses[Math.floor(Math.random() * analyses.length)];
+                            const occupancyPercent = randomAnalysis.total_spots > 0 
+                                ? Math.round((randomAnalysis.occupied_spots / randomAnalysis.total_spots) * 100) 
+                                : 0;
+                            
+                            const imagePath = randomAnalysis.result_path || randomAnalysis.original_path;
+                            
+                            const html = `
+                                <div class="position-relative rounded overflow-hidden border mb-2">
+                                    <img src="/${imagePath}" class="w-100" style="height: 140px; object-fit: cover;" alt="Park Analizi" onerror="this.src='/${randomAnalysis.original_path}';">
+                                    <div class="position-absolute bottom-0 w-100 bg-dark bg-opacity-75 text-white p-2 d-flex justify-content-between">
+                                        <span class="small fw-bold"><i class="fas fa-car text-danger me-1"></i>${randomAnalysis.occupied_spots} Dolu</span>
+                                        <span class="small fw-bold text-success"><i class="fas fa-check me-1"></i>${randomAnalysis.empty_spots} Boş</span>
+                                    </div>
+                                </div>
+                                <div class="progress mt-2" style="height: 6px; border-radius: 10px;">
+                                    <div class="progress-bar bg-danger" style="width: ${occupancyPercent}%"></div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="/property/${propertyId}/parking-analytics" class="btn btn-sm btn-outline-secondary rounded-pill px-4 w-100">
+                                        <i class="fas fa-search me-1"></i>Detaylı İncele
+                                    </a>
+                                </div>
+                            `;
+                            
+                            $('#parkingAnalysisContainer').html(html);
+                            console.log('✅ Default parking analysis displayed');
+                            return; // Başarılı olursa döngüden çık
+                        }
+                    }
+                } catch (error) {
+                    console.log(`❌ District ${district} failed:`, error);
+                    continue; // Sonraki ilçeyi dene
+                }
+            }
+            
+            // Hiçbir ilçede analiz bulunamazsa
+            $('#parkingAnalysisContainer').html(`
+                <div class="alert alert-light small border mb-0 text-center">
+                    <i class="fas fa-info-circle me-1"></i>Henüz bölge park analizi yok.
+                </div>
+            `);
+        }
+
+        // İlçeye Özel Park Analizlerini Yükle
+        async function loadDistrictParkingAnalyses(district) {
+            try {
+                console.log(`🔍 Loading parking analyses for district: ${district}`);
+                
+                const response = await fetch(`/api/district-parking-analyses/${district}?limit=10`);
+                
+                if (!response.ok) throw new Error('Park analizi bulunamadı');
+                
+                const data = await response.json();
+                let analyses = data.analyses || [];
+                
+                if (analyses.length === 0) {
+                    $('#parkingAnalysisContainer').html(`
+                        <div class="alert alert-light small border mb-0 text-center">
+                            <i class="fas fa-info-circle me-1"></i>Bu bölge için drone analizi yok.
+                        </div>
+                    `);
+                    return;
+                }
+                
+                console.log(`✅ Found ${analyses.length} analyses for ${district}`);
+                
+                // RASTGELE BİR ANALİZ SEÇ
+                const randomAnalysis = analyses[Math.floor(Math.random() * analyses.length)];
+                const occupancyPercent = randomAnalysis.total_spots > 0 
+                    ? Math.round((randomAnalysis.occupied_spots / randomAnalysis.total_spots) * 100) 
+                    : 0;
+                
+                const imagePath = randomAnalysis.result_path || randomAnalysis.original_path;
+                
+                const html = `
+                    <div class="position-relative rounded overflow-hidden border mb-2">
+                        <img src="/${imagePath}" class="w-100" style="height: 140px; object-fit: cover;" alt="Park Analizi" onerror="this.src='/${randomAnalysis.original_path}';">
+                        <div class="position-absolute bottom-0 w-100 bg-dark bg-opacity-75 text-white p-2 d-flex justify-content-between">
+                            <span class="small fw-bold"><i class="fas fa-car text-danger me-1"></i>${randomAnalysis.occupied_spots} Dolu</span>
+                            <span class="small fw-bold text-success"><i class="fas fa-check me-1"></i>${randomAnalysis.empty_spots} Boş</span>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px; border-radius: 10px;">
+                        <div class="progress-bar bg-danger" style="width: ${occupancyPercent}%"></div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="/property/${propertyId}/parking-analytics" class="btn btn-sm btn-outline-secondary rounded-pill px-4 w-100">
+                            <i class="fas fa-search me-1"></i>Detaylı İncele
+                        </a>
+                    </div>
+                `;
+                
+                $('#parkingAnalysisContainer').html(html);
+                console.log('✅ Parking analysis displayed');
+                
+            } catch (error) {
+                console.error('❌ Parking analysis error:', error);
+                $('#parkingAnalysisContainer').html(`
+                    <div class="alert alert-light small border mb-0 text-center">
+                        <i class="fas fa-exclamation-triangle text-warning me-1"></i>Analiz yüklenemedi.
+                    </div>
+                `);
+            }
+        }
+    </script>
+</body>
+</html>

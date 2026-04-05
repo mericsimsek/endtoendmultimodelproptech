@@ -3,909 +3,549 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akıllı Park & Emlak Sistemi - Ana Sayfa</title>
+    <title>Akıllı Park & Emlak Sistemi</title>
     
-    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- AOS Animation -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
     
     <style>
+        /* === MODERN & FERAH PROPTECH TEMASI === */
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --bg-color: #f8fafc;
+            --primary-color: #1e293b; /* Koyu Lacivert / Yazılar İçin */
+            --accent-blue: #2563eb; /* Güven veren mavi */
+            --accent-green: #10b981; /* Fiyat/Kira için yeşil */
+            --card-bg: #ffffff;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--primary-gradient);
-            min-height: 100vh;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
             overflow-x: hidden;
         }
 
-        /* Hero Section */
+        /* Ferah Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            padding: 15px 0;
+        }
+        .navbar-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary-color) !important; }
+        .navbar-brand i { color: var(--accent-blue); }
+        .nav-link { color: #475569 !important; font-weight: 600; margin: 0 10px; transition: color 0.3s; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-blue) !important; }
+
+        /* Giriş (Hero) Alanı */
         .hero-section {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            background: var(--primary-gradient);
+            min-height: 85vh;
+            display: flex; align-items: center;
+            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+            position: relative; padding-top: 80px;
         }
-
-        .hero-content {
-            z-index: 2;
-            color: white;
-        }
-
         .hero-title {
-            font-size: 4rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(45deg, #fff, #f0f8ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 4rem; font-weight: 800; line-height: 1.2; color: var(--primary-color);
+            margin-bottom: 1.5rem; letter-spacing: -1px;
         }
+        .hero-title span { color: var(--accent-blue); }
+        .hero-subtitle { font-size: 1.25rem; color: #475569; margin-bottom: 2rem; font-weight: 400; line-height: 1.6; }
 
-        .hero-subtitle {
-            font-size: 1.4rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
+        /* Butonlar */
+        .btn-primary-custom {
+            background-color: var(--accent-blue); color: white; border: none;
+            padding: 12px 30px; border-radius: 8px; font-weight: 600; transition: all 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
         }
-
-        .hero-buttons .btn {
-            margin: 0.5rem;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
+        .btn-primary-custom:hover { background-color: #1d4ed8; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); color: white;}
+        .btn-outline-custom {
+            background-color: transparent; color: var(--primary-color); border: 2px solid #e2e8f0;
+            padding: 12px 30px; border-radius: 8px; font-weight: 600; transition: all 0.3s;
         }
+        .btn-outline-custom:hover { border-color: var(--accent-blue); color: var(--accent-blue); background: #f8fafc; }
 
-        .btn-hero-primary {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-        }
-
-        .btn-hero-primary:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        .btn-hero-outline {
-            background: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            color: white;
-        }
-
-        .btn-hero-outline:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: white;
-            transform: translateY(-3px);
-            color: white;
-        }
-
-        /* Floating Animation */
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        /* Features Section */
-        .features-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            margin-top: -100px;
-            border-radius: 30px 30px 0 0;
-            padding: 100px 0 80px;
-            position: relative;
-            z-index: 3;
-        }
-
+        /* Temiz Kartlar (Özellikler) */
         .feature-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            height: 100%;
-            border: none;
-            position: relative;
-            overflow: hidden;
+            background: var(--card-bg); border-radius: 16px; padding: 40px 30px;
+            border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.3s ease; text-align: center; height: 100%;
         }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--primary-gradient);
-            transform: scaleX(0);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
-        }
-
+        .feature-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: #cbd5e1; }
         .feature-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            margin: 0 auto 25px;
-            color: white;
-            position: relative;
+            width: 70px; height: 70px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; margin: 0 auto 20px; color: var(--accent-blue); background: #eff6ff;
         }
 
-        .feature-icon.parking { background: var(--primary-gradient); }
-        .feature-icon.price { background: var(--secondary-gradient); }
-        .feature-icon.recommend { background: var(--success-gradient); }
-        .feature-icon.analytics { background: var(--warning-gradient); }
+        /* İstatistikler */
+        .stat-number { font-size: 3rem; font-weight: 800; color: var(--primary-color); margin-bottom: 5px; letter-spacing: -1px; }
+        .stat-label { color: #64748b; font-weight: 600; font-size: 0.95rem; }
 
-        /* Stats Section */
-        .stats-section {
-            background: var(--primary-gradient);
-            padding: 80px 0;
-            color: white;
+        /* Zillow Tarzı İlan Kartları */
+        .property-card {
+            background: var(--card-bg); border-radius: 12px; overflow: hidden;
+            border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.3s ease; cursor: pointer;
+        }
+        .property-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .card-img-wrapper { position: relative; height: 220px; overflow: hidden; }
+        .card-img-top { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .property-card:hover .card-img-top { transform: scale(1.05); }
+        
+        .badge-ai {
+            position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,0.95);
+            padding: 6px 10px; border-radius: 6px; font-weight: 700; color: var(--accent-blue); font-size: 0.8rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .property-price { font-size: 1.5rem; font-weight: 800; color: var(--primary-color); margin-bottom: 4px; letter-spacing: -0.5px;}
+        .property-title { font-size: 1.05rem; font-weight: 600; color: #334155; margin-bottom: 8px; }
+        .property-address { color: #64748b; font-size: 0.9rem; margin-bottom: 15px; }
+        
+        .property-features { display: flex; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 15px; margin-top: 15px; }
+        .p-feature { font-size: 0.9rem; color: #475569; font-weight: 600; margin-right: 15px; }
+        .p-feature i { color: #94a3b8; margin-right: 4px; }
+        
+        /* Filtre Butonları */
+        .filter-btn {
+            background: #fff; color: #475569; border: 1px solid #e2e8f0;
+            border-radius: 8px !important; padding: 8px 20px; font-weight: 600; transition: all 0.2s; margin: 0 5px;
+        }
+        .btn-check:checked + .filter-btn, .filter-btn:hover {
+            background: var(--accent-blue); color: #fff; border-color: var(--accent-blue);
         }
 
-        .stat-item {
-            text-align: center;
-            padding: 20px;
+        /* Footer */
+        /* FOOTER DÜZELTMESİ (YAZILAR BEYAZ/GÜMÜŞ YAPILDI) */
+        .footer { 
+            background: #0f172a !important; 
+            padding: 60px 0; 
+            margin-top: 60px; 
+            color: #cbd5e1 !important; 
         }
-
-        .stat-number {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #fff, #f0f8ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-label {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-            
-
-        /* System Status */
-        .status-section {
-            background: white;
-            padding: 80px 0;
-        }
-
-        .status-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .status-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .status-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 1.5rem;
-        }
-
-        .status-online {
-            background: #d4edda;
-            color: #28a745;
-        }
-
-        .status-offline {
-            background: #f8d7da;
-            color: #dc3545;
-        }
-
-        /* Demo Section */
-        .demo-section {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 80px 0;
-        }
-
-        .demo-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .demo-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .features-section {
-                margin-top: -50px;
-                padding: 80px 0 60px;
-            }
-            
-            .stat-number {
-                font-size: 2.5rem;
-            }
-        }
-
-        /* Background Animation */
-        .bg-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .bg-animation span {
-            position: absolute;
-            display: block;
-            width: 20px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            animation: move 25s linear infinite;
-            border-radius: 50%;
-        }
-
-        @keyframes move {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
-            }
-        }
+        .footer h5 { color: #ffffff !important; font-weight: 700; margin-bottom: 20px; }
+        .footer p, .footer .small, .footer div { color: #cbd5e1 !important; }
+        .footer a { color: #cbd5e1 !important; transition: all 0.3s; }
+        .footer a:hover { color: #38bdf8 !important; text-decoration: underline !important; }
+        .footer hr { border-color: rgba(255,255,255,0.1) !important; }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(44, 62, 80, 0.95); backdrop-filter: blur(10px);">
+
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fas fa-car-alt me-2"></i>Akıllı Park & Emlak
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-home"></i> Akıllı Park & Emlak
             </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars text-dark"></i>
             </button>
-            
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/"><i class="fas fa-home me-1"></i>Ana Sayfa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/parking"><i class="fas fa-parking me-1"></i>Park Analizi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/price-prediction"><i class="fas fa-chart-line me-1"></i>Fiyat Tahmini</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/recommendations"><i class="fas fa-lightbulb me-1"></i>Öneriler</a>
-                    </li>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link active" href="/">Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/parking">Park Analizi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/price-prediction">Fiyat Tahmini</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/recommendations">Öneriler</a></li>
+                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0"><a class="btn btn-primary-custom px-4 py-2" href="/all-properties">Tüm İlanlar</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section class="hero-section">
-        <div class="bg-animation">
-            <span style="left: 10%; animation-delay: 0s;"></span>
-            <span style="left: 20%; animation-delay: 2s;"></span>
-            <span style="left: 30%; animation-delay: 4s;"></span>
-            <span style="left: 40%; animation-delay: 6s;"></span>
-            <span style="left: 50%; animation-delay: 8s;"></span>
-            <span style="left: 60%; animation-delay: 10s;"></span>
-            <span style="left: 70%; animation-delay: 12s;"></span>
-            <span style="left: 80%; animation-delay: 14s;"></span>
-            <span style="left: 90%; animation-delay: 16s;"></span>
-        </div>
-        
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <div class="hero-content" data-aos="fade-right">
-                        <h1 class="hero-title">Akıllı Park & Emlak Sistemi</h1>
-                        <p class="hero-subtitle">
-                            Yapay zeka destekli park yeri analizi, emlak fiyat tahmini ve akıllı öneri sistemi ile geleceği keşfedin.
-                        </p>
-                        <div class="hero-buttons">
-                            <a href="/parking" class="btn btn-hero-primary">
-                                <i class="fas fa-parking me-2"></i>Park Analizi
-                            </a>
-                            <a href="/price-prediction" class="btn btn-hero-outline">
-                                <i class="fas fa-chart-line me-2"></i>Fiyat Tahmini
-                            </a>
-                        </div>
+                    <span class="badge bg-light text-primary border border-primary-subtle px-3 py-2 rounded-pill mb-4 shadow-sm">
+                        <i class="fas fa-sparkles text-warning me-1"></i> Yeni Nesil Emlak Teknolojisi
+                    </span>
+                    <h1 class="hero-title">Evinizin Gerçek Değerini <span>Yapay Zeka</span> İle Keşfedin.</h1>
+                    <p class="hero-subtitle">
+                        Milyonlarca veriyi saniyeler içinde analiz eden algoritmalarla en doğru fiyatı bulun, drone park analizleriyle bölgenin yaşam kalitesini ölçün.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="/price-prediction" class="btn btn-primary-custom">
+                            Hemen Tahmin Yap
+                        </a>
+                        <a href="#featured-section" class="btn btn-outline-custom">
+                            İlanları İncele
+                        </a>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="text-center" data-aos="fade-left">
-                        <i class="fas fa-robot floating" style="font-size: 15rem; color: rgba(255,255,255,0.1);"></i>
-                    </div>
+                <div class="col-lg-6 text-center d-none d-lg-block">
+                    <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Modern House" class="img-fluid rounded-4 shadow-lg" style="transform: perspective(1000px) rotateY(-15deg); border: 10px solid white;">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features-section">
+    <section class="py-5 mt-5">
         <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center" data-aos="fade-up">
-                    <h2 class="display-4 fw-bold mb-4">Özellikler</h2>
-                    <p class="lead text-muted">AI destekli çözümlerimizle işinizi kolaylaştırın</p>
-                </div>
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-dark">Sistem Özellikleri</h2>
+                <p class="text-muted">Güvenilir ve veriye dayalı gayrimenkul çözümleri</p>
             </div>
             
             <div class="row g-4">
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="feature-card text-center">
-                        <div class="feature-icon parking">
-                            <i class="fas fa-parking"></i>
-                        </div>
-                        <h4 class="mb-3">YOLO Park Analizi</h4>
-                        <p class="text-muted">Gerçek zamanlı görüntü işleme ile park yeri doluluk analizi ve istatistikleri.</p>
-                        <a href="/parking" class="btn btn-outline-primary btn-sm mt-3">Dene</a>
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-parking"></i></div>
+                        <h5 class="fw-bold text-dark">Park Analizi</h5>
+                        <p class="text-muted small mb-0">Bölgedeki otopark doluluk oranlarını yapay zeka ile otomatik tespit edin.</p>
                     </div>
                 </div>
-                
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="feature-card text-center">
-                        <div class="feature-icon price">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h4 class="mb-3">Fiyat Tahmini</h4>
-                        <p class="text-muted">XGBoost algoritması ile emlak fiyat tahminleri ve pazar analizi.</p>
-                        <a href="/price-prediction" class="btn btn-outline-primary btn-sm mt-3">Dene</a>
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="color: #10b981; background: #ecfdf5;"><i class="fas fa-chart-line"></i></div>
+                        <h5 class="fw-bold text-dark">Fiyat Değerleme</h5>
+                        <p class="text-muted small mb-0">Evinizin özelliklerini girin, makine öğrenmesi anında gerçek değerini söylesin.</p>
                     </div>
                 </div>
-                
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="feature-card text-center">
-                        <div class="feature-icon recommend">
-                            <i class="fas fa-lightbulb"></i>
-                        </div>
-                        <h4 class="mb-3">Akıllı Öneriler</h4>
-                        <p class="text-muted">Hibrit öneri algoritması ile kişiselleştirilmiş emlak önerileri.</p>
-                        <a href="/recommendations"  class="btn btn-outline-primary btn-sm mt-3">Dene</a>
-                        </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="color: #8b5cf6; background: #f5f3ff;"><i class="fas fa-magic"></i></div>
+                        <h5 class="fw-bold text-dark">Akıllı Öneriler</h5>
+                        <p class="text-muted small mb-0">Bütçenize ve yaşam tarzınıza en uygun emlak alternatiflerini listeler.</p>
+                    </div>
                 </div>
-                
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                    <div class="feature-card text-center">
-                        <div class="feature-icon analytics">
-                            <i class="fas fa-chart-pie"></i>
-                        </div>
-                        <h4 class="mb-3">Detaylı Analizler</h4>
-                        <p class="text-muted">Bölgesel analizler ve istatistiklerle bilinçli kararlar verin.</p>
-                        <a href="/analytics" class="btn btn-outline-primary btn-sm mt-3">Dene</a>
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="color: #f59e0b; background: #fffbeb;"><i class="fas fa-map-marked-alt"></i></div>
+                        <h5 class="fw-bold text-dark">Lokasyon Skoru</h5>
+                        <p class="text-muted small mb-0">Muhitin lüks ve yaşam kalitesi puanlarını istatistiksel olarak görün.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="stats-section">
+    <section id="featured-section" class="py-5 bg-white">
         <div class="container">
-            <div class="row">
-                <div class="col-md-3 col-6" data-aos="fade-up">
-                    <div class="stat-item">
-                        <div class="stat-number" id="parkingSpots">2500+</div>
-                        <div class="stat-label">Analiz Edilen Park</div>
-                    </div>
+            <div class="row mb-4 align-items-end">
+                <div class="col-md-6">
+                    <h2 class="fw-bold mb-2 text-dark">Öne Çıkan İlanlar</h2>
+                    <p class="text-muted mb-0">Yapay zeka tarafından analiz edilmiş güncel portföy</p>
                 </div>
-                <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="stat-item">
-                        <div class="stat-number" id="pricePredictions">98%</div>
-                        <div class="stat-label">Doğru Tahmin</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="stat-item">
-                        <div class="stat-number" id="happyUsers">500+</div>
-                        <div class="stat-label">Mutlu Kullanıcı</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="stat-item">
-                        <div class="stat-number" id="aiModels">4</div>
-                        <div class="stat-label">AI Modeli</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="featured-section py-5" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
-    <div class="container">
-        <div class="row mb-5">
-            <div class="col-12 text-center" data-aos="fade-up">
-                <h2 class="display-4 fw-bold mb-4" style="color: #2c3e50;">Öne Çıkan İlanlar</h2>
-                <p class="lead text-muted">AI tarafından analiz edilen en güncel emlak ilanları</p>
-                <div class="d-flex justify-content-center align-items-center mb-4">
-                    <span class="badge bg-success me-2">
-                        <i class="fas fa-robot me-1"></i>AI Destekli
-                    </span>
-                    <span class="badge bg-info me-2">
-                        <i class="fas fa-clock me-1"></i>Güncel
-                    </span>
-                    <span class="badge bg-warning">
-                        <i class="fas fa-star me-1"></i>Önerilen
-                    </span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Filter Buttons -->
-        <div class="row mb-4">
-            <div class="col-12 text-center" data-aos="fade-up">
-                <div class="btn-group" role="group" id="propertyFilters">
-                    <input type="radio" class="btn-check" name="propertyFilter" id="filterAll" autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="filterAll">Tümü</label>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <div class="btn-group" role="group" id="propertyFilters">
+                        <input type="radio" class="btn-check" name="propertyFilter" id="filterAll" checked>
+                        <label class="btn filter-btn" for="filterAll">Tümü</label>
 
-                    <input type="radio" class="btn-check" name="propertyFilter" id="filter2+1" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="filter2+1">2+1</label>
+                        <input type="radio" class="btn-check" name="propertyFilter" id="filter2+1">
+                        <label class="btn filter-btn" for="filter2+1">2+1</label>
 
-                    <input type="radio" class="btn-check" name="propertyFilter" id="filter3+1" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="filter3+1">3+1</label>
-
-                    <input type="radio" class="btn-check" name="propertyFilter" id="filter4+1" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="filter4+1">4+1</label>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row" id="featuredProperties">
-            <!-- İlanlar buraya yüklenecek -->
-            <div class="col-12 text-center">
-                <div class="d-flex justify-content-center align-items-center py-5">
-                    <div class="spinner-border text-primary me-3" role="status" style="width: 2rem; height: 2rem;">
-                        <span class="visually-hidden">Yükleniyor...</span>
+                        <input type="radio" class="btn-check" name="propertyFilter" id="filter3+1">
+                        <label class="btn filter-btn" for="filter3+1">3+1</label>
                     </div>
-                    <div>
-                        <h5 class="mb-1">İlanlar Yükleniyor...</h5>
-                        <p class="text-muted mb-0">AI analizi devam ediyor</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- View More Button -->
-        <div class="text-center mt-5" data-aos="fade-up">
-            <button class="btn btn-primary btn-lg me-3" id="loadMoreProperties">
-                <i class="fas fa-plus me-2"></i>Daha Fazla Göster
-            </button>
-            <a href="/all-properties" class="btn btn-outline-primary btn-lg">
-                <i class="fas fa-list me-2"></i>Tüm İlanları Görüntüle
-            </a>
-        </div>
-        
-        <!-- Quick Stats -->
-        <div class="row mt-5 pt-4 border-top">
-            <div class="col-md-3 col-6 text-center" data-aos="fade-up">
-                <div class="mb-2">
-                    <i class="fas fa-home fa-2x text-primary"></i>
-                </div>
-                <h4 class="mb-1" id="totalProperties">1,247</h4>
-                <small class="text-muted">Toplam İlan</small>
-            </div>
-            <div class="col-md-3 col-6 text-center" data-aos="fade-up" data-aos-delay="100">
-                <div class="mb-2">
-                    <i class="fas fa-map-marker-alt fa-2x text-success"></i>
-                </div>
-                <h4 class="mb-1" id="totalLocations">34</h4>
-                <small class="text-muted">Farklı Bölge</small>
-            </div>
-            <div class="col-md-3 col-6 text-center" data-aos="fade-up" data-aos-delay="200">
-                <div class="mb-2">
-                    <i class="fas fa-chart-line fa-2x text-warning"></i>
-                </div>
-                <h4 class="mb-1" id="avgPrice">₺2.8M</h4>
-                <small class="text-muted">Ortalama Fiyat</small>
-            </div>
-            <div class="col-md-3 col-6 text-center" data-aos="fade-up" data-aos-delay="300">
-                <div class="mb-2">
-                    <i class="fas fa-clock fa-2x text-info"></i>
-                </div>
-                <h4 class="mb-1" id="recentUpdates">24</h4>
-                <small class="text-muted">Son 24 Saat</small>
-            </div>
-        </div>
-    </div>
-</section>
-
-    <!-- System Status Section -->
-    <section class="status-section">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center" data-aos="fade-up">
-                    <h2 class="display-4 fw-bold mb-4">Sistem Durumu</h2>
-                    <p class="lead text-muted">Gerçek zamanlı sistem istatistikleri</p>
                 </div>
             </div>
             
-            <div class="row g-4">
-                <div class="col-md-3 col-6" data-aos="fade-up">
-                    <div class="status-card">
-                        <div class="status-icon status-online">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <h5>Park Analizi</h5>
-                        <p class="text-success fw-bold">Çalışıyor</p>
-                        <small class="text-muted">Son güncelleme: <span id="parkingUpdate">2 dakika önce</span></small>
-                    </div>
+            <div class="row g-4" id="featuredProperties">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="text-muted mt-3 fw-bold">İlanlar yükleniyor...</p>
                 </div>
-                
-                <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="status-card">
-                        <div class="status-icon status-online">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <h5>Fiyat Tahmini</h5>
-                        <p class="text-success fw-bold">Çalışıyor</p>
-                        <small class="text-muted">Son güncelleme: <span id="priceUpdate">5 dakika önce</span></small>
-                    </div>
-                </div>
-                
-                <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="status-card">
-                        <div class="status-icon status-online">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <h5>Öneri Sistemi</h5>
-                        <p class="text-success fw-bold">Çalışıyor</p>
-                        <small class="text-muted">Son güncelleme: <span id="recommendUpdate">10 dakika önce</span></small>
-                    </div>
-                </div>
-                
-                <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="status-card">
-                        <div class="status-icon status-online">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <h5>Veritabanı</h5>
-                        <p class="text-success fw-bold">Çalışıyor</p>
-                        <small class="text-muted">Son güncelleme: <span id="dbUpdate">1 dakika önce</span></small>
-                    </div>
-                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                <a href="/all-properties" class="btn btn-outline-custom">Tüm İlanları Görüntüle</a>
             </div>
         </div>
     </section>
 
-    <!-- Demo Section -->
-    <section class="demo-section">
+    <section class="py-5 border-top border-bottom bg-white">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6" data-aos="fade-right">
-                    <div class="demo-card">
-                        <h3 class="mb-4">Park Analizi Demo</h3>
-                        <img src="https://via.placeholder.com/600x400" alt="Park Analizi Demo" class="img-fluid rounded mb-4">
-                        <p>YOLO algoritması ile gerçek zamanlı park yeri analizi yapın ve doluluk oranlarını görüntüleyin.</p>
-                        <a href="/parking" class="btn btn-primary">Demo'yu Görüntüle</a>
-                    </div>
+            <div class="row text-center">
+                <div class="col-md-3 col-6 mb-4 mb-md-0">
+                    <div class="stat-number">2500+</div>
+                    <div class="stat-label">Analiz Edilen Ev</div>
                 </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <div class="demo-card">
-                        <h3 class="mb-4">Fiyat Tahmini Demo</h3>
-                        <img src="https://via.placeholder.com/600x400" alt="Fiyat Tahmini Demo" class="img-fluid rounded mb-4">
-                        <p>Makine öğrenmesi modellerimizle emlak fiyat tahminleri yapın ve bölgesel analizleri görüntüleyin.</p>
-                        <a href="/price-prediction" class="btn btn-primary">Demo'yu Görüntüle</a>
-                    </div>
+                <div class="col-md-3 col-6 mb-4 mb-md-0">
+                    <div class="stat-number text-success">%98</div>
+                    <div class="stat-label">Tahmin Başarısı</div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-number text-primary" id="happyUsers">1240+</div>
+                    <div class="stat-label">Aktif İlan</div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-number" style="color: #8b5cf6;">4</div>
+                    <div class="stat-label">AI Modeli</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-5" style="background: rgba(44, 62, 80, 0.95); color: white;">
+    <footer class="footer">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 mb-4">
-                    <h5 class="mb-4"><i class="fas fa-car-alt me-2"></i>Akıllı Park & Emlak</h5>
-                    <p>Yapay zeka destekli park yeri analizi ve emlak fiyat tahmini sistemleri.</p>
-                    <div class="social-icons">
-                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
+                    <h5><i class="fas fa-home text-primary me-2"></i>Akıllı Park & Emlak</h5>
+                    <p class="small text-muted mt-3">Güvenilir, şeffaf ve yapay zeka destekli yeni nesil gayrimenkul değerleme platformu.</p>
                 </div>
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h5 class="mb-4">Hızlı Linkler</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="/" class="text-white">Ana Sayfa</a></li>
-                        <li class="mb-2"><a href="/parking" class="text-white">Park Analizi</a></li>
-                        <li class="mb-2"><a href="/price-prediction" class="text-white">Fiyat Tahmini</a></li>
-                        <li class="mb-2"><a href="/recommendations" class="text-white">Öneriler</a></li>
+                <div class="col-lg-4 mb-4 text-lg-center">
+                    <h5>Hızlı Menü</h5>
+                    <ul class="list-unstyled small mt-3">
+                        <li class="mb-2"><a href="/parking" class="text-muted text-decoration-none">Park Analizi</a></li>
+                        <li class="mb-2"><a href="/price-prediction" class="text-muted text-decoration-none">Fiyat Tahmini</a></li>
+                        <li class="mb-2"><a href="/recommendations" class="text-muted text-decoration-none">Emlak Önerileri</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5 class="mb-4">İletişim</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> İstanbul, Türkiye</li>
-                        <li class="mb-2"><i class="fas fa-phone me-2"></i> +90 555 123 45 67</li>
-                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@akillipark.com</li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 mb-4">
-                    <h5 class="mb-4">Bülten Aboneliği</h5>
-                    <p>Yeniliklerden haberdar olmak için e-posta listemize kaydolun.</p>
-                    <form>
-                        <div class="input-group mb-3">
-                            <input type="email" class="form-control" placeholder="E-posta adresiniz">
-                            <button class="btn btn-primary" type="submit">Abone Ol</button>
-                        </div>
-                    </form>
+                <div class="col-lg-4 mb-4">
+                    <h5>İletişim</h5>
+                    <p class="small text-muted mt-3 mb-1"><i class="fas fa-map-marker-alt me-2"></i>İstanbul, Türkiye</p>
+                    <p class="small text-muted mb-1"><i class="fas fa-envelope me-2"></i>info@akilliemlak.com</p>
                 </div>
             </div>
-            <hr style="background-color: rgba(255,255,255,0.1);">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-0">&copy; 2023 Akıllı Park & Emlak. Tüm hakları saklıdır.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <p class="mb-0">
-                        <a href="#" class="text-white me-3">Gizlilik Politikası</a>
-                        <a href="#" class="text-white">Kullanım Şartları</a>
-                    </p>
-                </div>
+            <hr class="mt-4 mb-4" style="border-color: rgba(255,255,255,0.1);">
+            <div class="text-center small text-muted">
+                &copy; 2024 Akıllı Park & Emlak. Tüm hakları saklıdır.
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <!-- AOS Animation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-    <!-- Counter Up -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
-    
+
     <script>
-        // Initialize AOS animation
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
+        // İlana Git
+        function viewProperty(id) { if (id) window.location.href = '/property/' + id; }
 
-        // Counter animation
-        $(document).ready(function() {
-            $('.stat-number').each(function() {
-                $(this).prop('Counter', 0).animate({
-                    Counter: $(this).text().replace(/[+%]/g, '')
-                }, {
-                    duration: 2000,
-                    easing: 'swing',
-                    step: function(now) {
-                        if ($(this).text().includes('%')) {
-                            $(this).text(Math.ceil(now) + '%');
-                        } else if ($(this).text().includes('+')) {
-                            $(this).text(Math.ceil(now) + '+');
-                        } else {
-                            $(this).text(Math.ceil(now));
-                        }
-                    }
-                });
-            });
+        // Görsel Havuzu
+        const dynamicImages = [
+            'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
+            'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
+            'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+            'https://images.unsplash.com/photo-1600607687920-4e2a09be15f1?w=800&q=80',
+            'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
+            'https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&q=80'
+        ];
 
-            // Update timestamps
-            function updateTimestamps() {
-                const now = new Date();
-                $('#parkingUpdate').text('1 dakika önce');
-                $('#priceUpdate').text('4 dakika önce');
-                $('#recommendUpdate').text('9 dakika önce');
-                $('#dbUpdate').text('Şimdi');
+        // İlanları Ekrana Bas (Ferah Premium Zillow Stili)
+        function displayProperties(properties) {
+            const container = document.getElementById('featuredProperties');
+            
+            if (!properties || properties.length === 0) {
+                container.innerHTML = '<div class="col-12 text-center mt-4"><div class="alert alert-light text-muted border">Gösterilecek ilan bulunamadı.</div></div>';
+                return;
             }
+            
+            container.innerHTML = '';
+            
+            properties.forEach((property, index) => {
+                const propId = property.id || property._id;
+                const title = property.title || 'Lüks Konut';
+                const location = `${property.district || ''}, ${property.province || 'İstanbul'}`;
+                
+                const price = property.price || 0;
+                const rentPrice = property.rent_price || (price / 200); 
+                const m2 = property.m2 || property.sqrt_m2 || 100;
+                const rooms = property.totalrooms || property.total_rooms || property.rooms || 3;
+                const baths = property.bathroom_count || 1;
+                
+                const aiScore = (((parseFloat(property.location_score || 5) + parseFloat(property.luxury_score_final || 5)) / 2)).toFixed(1);
+                const imgUrl = property.image || dynamicImages[index % dynamicImages.length];
 
-            // Update every minute
-            updateTimestamps();
-            setInterval(updateTimestamps, 60000);
-        });
-    </script>
-    <script>
-// Ana sayfa için ilan yükleme fonksiyonu
-function loadFeaturedProperties() {
-    // Mock ilan verisi - gerçek API'den gelecek
-    const mockProperties = [
-        {
-            id: 1,
-            title: "3+1 Merkezi Daire",
-            location: "Kadıköy, İstanbul", 
-            price: 2500000,
-            m2: 120,
-            rooms: "3+1",
-            features: ["Mobilyalı", "Klima", "Balkon"],
-            image: "https://via.placeholder.com/400x250",
-            score: 8.5
-        },
-        {
-            id: 2,
-            title: "2+1 Modern Daire",
-            location: "Beşiktaş, İstanbul",
-            price: 1800000,
-            m2: 95,
-            rooms: "2+1", 
-            features: ["Klima", "Balkon"],
-            image: "https://via.placeholder.com/400x250",
-            score: 7.8
-        },
-        {
-            id: 3,
-            title: "4+1 Lüks Villa",
-            location: "Sarıyer, İstanbul",
-            price: 8500000,
-            m2: 250,
-            rooms: "4+1",
-            features: ["Mobilyalı", "Klima", "Balkon", "Bahçe"],
-            image: "https://via.placeholder.com/400x250", 
-            score: 9.2
-        }
-        // Daha fazla ilan ekleyebilirsiniz
-    ];
-    
-    // Toplam 40 ilan için mock data generat et
-    const allProperties = [];
-    for(let i = 0; i < 40; i++) {
-        const base = mockProperties[i % 3];
-        allProperties.push({
-            ...base,
-            id: i + 1,
-            title: base.title + ` - ${i + 1}`,
-            price: base.price + (Math.random() * 500000 - 250000),
-            m2: base.m2 + (Math.random() * 50 - 25),
-            score: (base.score + (Math.random() * 2 - 1)).toFixed(1)
-        });
-    }
-    
-    displayProperties(allProperties.slice(0, 12)); // İlk 12 tanesini göster
-}
+                const priceFmt = new Intl.NumberFormat('tr-TR', {style: 'currency', currency: 'TRY', maximumFractionDigits: 0}).format(price);
+                const rentFmt = new Intl.NumberFormat('tr-TR', {style: 'currency', currency: 'TRY', maximumFractionDigits: 0}).format(rentPrice);
 
-function displayProperties(properties) {
-    const container = document.getElementById('featuredProperties');
-    
-    let html = '';
-    properties.forEach(property => {
-        const priceFormatted = new Intl.NumberFormat('tr-TR', {
-            style: 'currency',
-            currency: 'TRY'
-        }).format(property.price);
-        
-        const pricePerM2 = (property.price / property.m2).toLocaleString('tr-TR', {
-            maximumFractionDigits: 0
-        });
-        
-        const featuresHtml = property.features.map(f => 
-            `<span class="badge bg-light text-dark me-1">${f}</span>`
-        ).join('');
-        
-        html += `
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up">
-                <div class="card h-100 property-card">
-                    <div class="position-relative">
-                        <img src="${property.image}" class="card-img-top" alt="${property.title}" style="height: 200px; object-fit: cover;">
-                        <div class="position-absolute top-0 end-0 m-3">
-                            <span class="badge bg-success">${property.score} ★</span>
+                const col = document.createElement('div');
+                col.className = 'col-lg-4 col-md-6 mb-4';
+                
+                col.innerHTML = `
+                    <div class="property-card h-100 d-flex flex-column" onclick="viewProperty('${propId}')">
+                        <div class="card-img-wrapper">
+                            <img src="${imgUrl}" onerror="this.src='${dynamicImages[0]}'" class="card-img-top" alt="${title}">
+                            <div class="badge-ai"><i class="fas fa-star text-warning me-1"></i>${aiScore} Skor</div>
                         </div>
-                    </div>
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">${property.title}</h5>
-                        <p class="card-text text-muted">
-                            <i class="fas fa-map-marker-alt me-1"></i>${property.location}
-                        </p>
-                        <div class="property-details mb-3">
-                            <small class="text-muted">
-                                <i class="fas fa-expand-arrows-alt me-1"></i>${property.m2} m² 
-                                <i class="fas fa-door-closed me-1 ms-3"></i>${property.rooms}
-                            </small>
-                        </div>
-                        <div class="mb-3">
-                            ${featuresHtml}
-                        </div>
-                        <div class="mt-auto">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h4 class="text-primary mb-0">${priceFormatted}</h4>
-                                    <small class="text-muted">${pricePerM2} TL/m²</small>
-                                </div>
-                                <button class="btn btn-outline-primary btn-sm" onclick="viewProperty(${property.id})">
-                                    <i class="fas fa-eye me-1"></i>İncele
-                                </button>
+                        <div class="card-body p-4 d-flex flex-column flex-grow-1">
+                            <div class="property-price">${priceFmt}</div>
+                            <div class="property-title text-truncate" title="${title}">${title}</div>
+                            <div class="property-address"><i class="fas fa-map-marker-alt text-danger me-1"></i>${location}</div>
+                            
+                            <div class="property-features mt-auto">
+                                <div class="p-feature"><i class="fas fa-vector-square"></i>${m2} m²</div>
+                                <div class="p-feature"><i class="fas fa-door-open"></i>${rooms} Oda</div>
+                                <div class="p-feature"><i class="fas fa-bath"></i>${baths} Banyo</div>
+                            </div>
+
+                            <div class="mt-3 pt-3 border-top text-end">
+                                <span class="badge bg-success bg-opacity-10 text-success px-2 py-2 w-100 fs-6 border border-success-subtle">
+                                    <i class="fas fa-arrow-trend-up me-1"></i>Aylık Kira: ${rentFmt}
+                                </span>
                             </div>
                         </div>
                     </div>
-                </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        // İstatistik Güncelleme
+        function updateStats(properties) {
+            if (!properties || properties.length === 0) return;
+            if(document.getElementById('happyUsers')) document.getElementById('happyUsers').innerText = properties.length;
+        }
+
+        // API'den İlanları Çek
+        async function loadFeaturedProperties() {
+            try {
+                const response = await fetch('/api/properties?limit=6');
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.properties && data.properties.length > 0) {
+                    displayProperties(data.properties);
+                    updateStats(data.properties);
+                } else {
+                    displayProperties([]); 
+                }
+            } catch (error) {
+                console.error('İlan yükleme hatası:', error);
+                document.getElementById('featuredProperties').innerHTML = '<div class="col-12 text-center alert alert-danger">İlanlar yüklenemedi.</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadFeaturedProperties);
+    </script>
+    <style>
+        /* Chatbot CSS */
+        /* ========================================== */
+        /* AI ASİSTAN CHAT WIDGET (BÜYÜTÜLMÜŞ VERSİYON)*/
+        /* ========================================== */
+        .chat-widget-btn {
+            position: fixed; bottom: 40px; right: 40px; /* Kenarlardan biraz daha açtık */
+            width: 80px; height: 80px; border-radius: 50%; /* Butonu bayağı büyüttük */
+            background: linear-gradient(135deg, #0ea5e9, #2563eb); color: white;
+            box-shadow: 0 8px 30px rgba(37,99,235,0.5);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2.2rem; cursor: pointer; z-index: 9999; /* İkonu büyüttük */
+            transition: all 0.3s ease; border: none;
+        }
+        .chat-widget-btn:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 10px 35px rgba(37,99,235,0.7); }
+        
+        .chat-window {
+            position: fixed; bottom: 140px; right: 40px;
+            width: 420px; height: 600px; background: #ffffff; /* Genişlik 360->420, Boy 520->600 */
+            border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+            display: none; flex-direction: column; z-index: 9999;
+            border: 1px solid rgba(14, 165, 233, 0.2); overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #1e293b, #0f172a); color: white;
+            padding: 20px 25px; font-weight: 700; font-size: 1.25rem; /* Header daha ferah */
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 3px solid #0ea5e9;
+        }
+        .chat-header i.fa-times { cursor: pointer; font-size: 1.4rem; transition: 0.2s; }
+        .chat-header i.fa-times:hover { color: #ef4444; transform: scale(1.2); }
+        
+        .chat-body {
+            flex: 1; padding: 25px; overflow-y: auto;
+            background: #f8fafc; display: flex; flex-direction: column; gap: 15px;
+        }
+        
+        .chat-msg { max-width: 85%; padding: 15px 20px; font-size: 1.05rem; line-height: 1.6; box-shadow: 0 2px 5px rgba(0,0,0,0.05); } /* Yazılar ve baloncuklar büyüdü */
+        .msg-ai { background: white; color: #1e293b; align-self: flex-start; border: 1px solid #e2e8f0; border-radius: 20px 20px 20px 5px; }
+        .msg-user { background: #2563eb; color: white; align-self: flex-end; border-radius: 20px 20px 5px 20px; }
+        
+        .chat-input-area {
+            padding: 20px; background: white; border-top: 1px solid #e2e8f0;
+            display: flex; gap: 15px; align-items: center;
+        }
+        .chat-input-area input {
+            flex: 1; border: 1px solid #cbd5e1; border-radius: 30px;
+            padding: 15px 25px; outline: none; font-size: 1.05rem; background: #f8fafc;
+            transition: all 0.3s;
+        }
+        .chat-input-area input:focus { border-color: #0ea5e9; background: white; box-shadow: 0 0 0 4px rgba(14,165,233,0.1); }
+        .chat-send-btn {
+            background: #2563eb; color: white; border: none;
+            width: 55px; height: 55px; border-radius: 50%; /* Gönder butonu büyüdü */
+            display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s;
+            font-size: 1.2rem;
+        }
+        .chat-send-btn:hover { background: #1d4ed8; transform: scale(1.05); }
+        .typing-indicator { font-size: 0.95rem; color: #0ea5e9; font-weight: 600; display: none; margin-left: 25px; margin-bottom: 15px; }
+    </style>
+
+    <button class="chat-widget-btn" id="chatToggleBtn">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <span><i class="fas fa-sparkles me-2 text-info"></i> AI Asistan</span>
+            <i class="fas fa-times" id="chatCloseBtn"></i>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-msg msg-ai">
+                Merhaba! Ben Akıllı Emlak Asistanı. Size fiyat tahmini, park analizleri veya ilan önerileri konusunda nasıl yardımcı olabilirim? 🏡✨
             </div>
-        `;
-    });
-    
-    container.innerHTML = html;
-}
+        </div>
+        <div class="typing-indicator" id="chatTyping"><i class="fas fa-circle-notch fa-spin me-1"></i> Asistan yazıyor...</div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Bir şey sorun..." autocomplete="off">
+            <button class="chat-send-btn" id="chatSendBtn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
 
-function viewProperty(id) {
-    // İlan detay sayfasına yönlendir
-    window.location.href = `/property/${id}`;
-}
+    <script>
+        $(document).ready(function() {
+            const chatWindow = $('#chatWindow');
+            const chatBody = $('#chatBody');
+            const chatInput = $('#chatInput');
+            const typingIndicator = $('#chatTyping');
 
-// CSS ekleyin
-const propertyStyles = `
-<style>
-.property-card {
-    transition: all 0.3s ease;
-    border: none;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
+            // Chat aç/kapat animasyonlu
+            $('#chatToggleBtn').click(() => { 
+                chatWindow.fadeToggle(250); 
+                chatInput.focus(); 
+            });
+            $('#chatCloseBtn').click(() => chatWindow.fadeOut(250));
 
-.property-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-}
+            // Mesaj Gönderme İşlemi
+            function sendMessage() {
+                const text = chatInput.val().trim();
+                if (!text) return;
 
-.featured-section {
-    background: #f8f9fa !important;
-}
-</style>
-`;
+                // Kullanıcı mesajını ekrana bas
+                chatBody.append(`<div class="chat-msg msg-user">${text}</div>`);
+                chatInput.val('');
+                scrollToBottom();
 
-// Sayfa yüklendiğinde ilanları getir
-document.addEventListener('DOMContentLoaded', function() {
-    document.head.insertAdjacentHTML('beforeend', propertyStyles);
-    loadFeaturedProperties();
-});
-</script>
+                // Yükleniyor efekti
+                typingIndicator.show();
+
+                // API'ye istek at
+                $.ajax({
+                    url: '/api/chat',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ message: text }),
+                    success: function(res) {
+                        typingIndicator.hide();
+                        let replyText = res.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); // Bold'ları düzelt
+                        chatBody.append(`<div class="chat-msg msg-ai">${replyText}</div>`);
+                        scrollToBottom();
+                    },
+                    error: function() {
+                        typingIndicator.hide();
+                        chatBody.append(`<div class="chat-msg msg-ai text-danger"><i class="fas fa-exclamation-triangle me-1"></i> Bağlantı kurulamadı. API ayarlarınızı kontrol edin.</div>`);
+                        scrollToBottom();
+                    }
+                });
+            }
+
+            // Enter tuşu ve Buton
+            $('#chatSendBtn').click(sendMessage);
+            chatInput.keypress(function(e) { if(e.which == 13) sendMessage(); });
+
+            function scrollToBottom() {
+                chatBody.stop().animate({ scrollTop: chatBody[0].scrollHeight }, 300);
+            }
+        });
+    </script>
 </body>
 </html>
