@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropTech OS - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f4f6f9; }
+        .sidebar { min-height: 100vh; background-color: #212529; color: white; }
+        .sidebar .nav-link { color: #adb5bd; padding: 12px 20px; margin-bottom: 5px; border-radius: 5px; cursor: pointer; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #0d6efd; color: white; }
+        .stat-card { border-left: 4px solid #0d6efd; }
+        .stat-card.success { border-left-color: #198754; }
+        .stat-card.warning { border-left-color: #ffc107; }
+        .stat-card.danger { border-left-color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar p-3 d-none d-md-block">
+            <h4 class="text-white text-center fw-bold mb-4 mt-2">PropTech<span class="text-primary">OS</span></h4>
+            <hr class="text-secondary">
+            
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <button class="nav-link active text-start" id="v-pills-add-tab" data-bs-toggle="pill" data-bs-target="#v-pills-add" type="button" role="tab"><i class="bi bi-plus-circle me-2"></i>Yeni İlan Ekle</button>
+                <button class="nav-link text-start" id="v-pills-list-tab" data-bs-toggle="pill" data-bs-target="#v-pills-list" type="button" role="tab" onclick="loadProperties()"><i class="bi bi-list-ul me-2"></i>İlan Yönetimi</button>
+                <button class="nav-link text-start" id="v-pills-parking-tab" data-bs-toggle="pill" data-bs-target="#v-pills-parking" type="button" role="tab"><i class="bi bi-car-front me-2"></i>Otopark Verisi Yükle</button>
+                <a href="/" class="nav-link text-start mt-4 bg-danger text-white"><i class="bi bi-box-arrow-left me-2"></i>Siteye Dön</a>
+            </div>
+        </div>
+
+        <div class="col-md-10 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">Yönetim Paneli</h2>
+                <span class="badge bg-success p-2"><i class="bi bi-check-circle me-1"></i> Sistem Optimizasyonu: %98.4</span>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-muted">Toplam İlan (DB)</h6>
+                            <h3 class="fw-bold mb-0">17,546 <small class="text-success fs-6"><i class="bi bi-arrow-up"></i></small></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card success shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-muted">XGBoost Doğruluğu</h6>
+                            <h3 class="fw-bold mb-0">%89.2 <small class="text-success fs-6"><i class="bi bi-arrow-up"></i></small></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card warning shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-muted">Günlük API İsteği</h6>
+                            <h3 class="fw-bold mb-0">1,204</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card danger shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-muted">Bekleyen YOLO Analizi</h6>
+                            <h3 class="fw-bold mb-0">0 <small class="text-muted fs-6">Kuyruk boş</small></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="v-pills-tabContent">
+                
+                <div class="tab-pane fade show active" id="v-pills-add" role="tabpanel">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="mb-0 fw-bold"><i class="bi bi-plus-circle-fill text-primary me-2"></i>Sisteme Yeni İlan Tanımla</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="addPropertyForm">
+                                <div class="row g-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label text-muted small fw-bold">İLAN BAŞLIĞI</label>
+                                        <input type="text" class="form-control" id="title" required placeholder="Örn: Kadıköy'de Lüks Daire">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted small fw-bold">İLÇE</label>
+                                        <select class="form-select" id="district">
+                                            <option value="Kadıköy">Kadıköy</option>
+                                            <option value="Beşiktaş">Beşiktaş</option>
+                                            <option value="Şişli">Şişli</option>
+                                            <option value="Üsküdar">Üsküdar</option>
+                                            <option value="Bursa">Bursa</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small fw-bold">FİYAT (TL)</label>
+                                        <input type="number" class="form-control" id="price" required placeholder="3500000">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small fw-bold">METREKARE (m²)</label>
+                                        <input type="number" class="form-control" id="m2" required value="100">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small fw-bold">ODA SAYISI</label>
+                                        <input type="number" class="form-control" id="totalrooms" required value="3">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small fw-bold">BANYO SAYISI</label>
+                                        <input type="number" class="form-control" id="bathroom_count" required value="1">
+                                    </div>
+                                    
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small fw-bold">BİNA YAŞI</label>
+                                        <input type="number" class="form-control" id="building_age" value="0">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small fw-bold">BULUNDUĞU KAT</label>
+                                        <input type="number" class="form-control" id="floor_level" value="1">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small fw-bold">LOKASYON SKORU (1-10)</label>
+                                        <input type="number" step="0.1" class="form-control" id="location_score" required value="7">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small fw-bold">LÜKS SKORU (1-10)</label>
+                                        <input type="number" step="0.1" class="form-control" id="luxury_score" required value="6">
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label text-muted small fw-bold">GPS KOORDİNATLARI (Park Analizi İçin Zorunlu)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Lat</span>
+                                            <input type="text" class="form-control" id="lat" placeholder="Örn: 40.990">
+                                            <span class="input-group-text">Lon</span>
+                                            <input type="text" class="form-control" id="lon" placeholder="Örn: 29.020">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mt-4 bg-light p-3 rounded d-flex flex-wrap gap-4">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="furnished">
+                                            <label class="form-check-label fw-bold">Eşyalı</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="air_conditioning">
+                                            <label class="form-check-label fw-bold">Klima Sistemi</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="has_balcony">
+                                            <label class="form-check-label fw-bold">Geniş Balkon</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="has_elevator">
+                                            <label class="form-check-label fw-bold">Asansör</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="has_parking">
+                                            <label class="form-check-label fw-bold">Özel Otopark</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="has_garden">
+                                            <label class="form-check-label fw-bold">Bahçe Kullanımı</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mt-4 text-end">
+                                        <button type="submit" class="btn btn-primary px-5 fw-bold" id="submitBtn">
+                                            <i class="bi bi-database-add me-2"></i>MongoDB'ye Yaz ve Modeli Güncelle
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div id="alertBox" class="alert mt-4 d-none" role="alert"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="v-pills-list" role="tabpanel">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold"><i class="bi bi-list-ul text-primary me-2"></i>Son Eklenen İlanlar</h5>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="loadProperties()"><i class="bi bi-arrow-clockwise"></i> Yenile</button>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Başlık</th>
+                                            <th>İlçe</th>
+                                            <th>Fiyat</th>
+                                            <th>m²</th>
+                                            <th class="text-end">İşlem</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="propertyTableBody">
+                                        <tr><td colspan="5" class="text-center py-4">Yükleniyor...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="v-pills-parking" role="tabpanel">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="mb-0 fw-bold"><i class="bi bi-camera text-primary me-2"></i>İlçeye Otopark Görüntüsü Yükle</h5>
+                            <small class="text-muted">Yüklenen görüntüler sistemdeki Offline YOLO scripti tarafından işlenmek üzere dizine kaydedilir.</small>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="uploadParkingForm">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Hedef İlçe</label>
+                                        <select class="form-select" id="parkingDistrict" required>
+                                            <option value="Kadıköy">Kadıköy</option>
+                                            <option value="Beşiktaş">Beşiktaş</option>
+                                            <option value="Şişli">Şişli</option>
+                                            <option value="Üsküdar">Üsküdar</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Kamera/Otopark Görüntüsü</label>
+                                        <input class="form-control" type="file" id="parkingFile" accept="image/png, image/jpeg" required>
+                                    </div>
+                                    <div class="col-12 mt-4">
+                                        <button type="submit" class="btn btn-dark px-4 fw-bold" id="uploadBtn">YOLO Veri Havuzuna Gönder</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div id="parkingAlertBox" class="alert mt-4 d-none" role="alert"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// --- İLAN EKLEME ---
+document.getElementById('addPropertyForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const alertBox = document.getElementById('alertBox');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Yapay Zeka Motoruna İşleniyor...';
+    alertBox.classList.add('d-none');
+    
+    const data = {
+        title: document.getElementById('title').value,
+        district: document.getElementById('district').value,
+        price: parseFloat(document.getElementById('price').value),
+        m2: parseFloat(document.getElementById('m2').value),
+        totalrooms: parseInt(document.getElementById('totalrooms').value),
+        bathroom_count: parseInt(document.getElementById('bathroom_count').value),
+        building_age: parseInt(document.getElementById('building_age').value || 0),
+        floor_level: parseInt(document.getElementById('floor_level').value || 1),
+        location_score: parseFloat(document.getElementById('location_score').value),
+        luxury_score: parseFloat(document.getElementById('luxury_score').value),
+        lat: parseFloat(document.getElementById('lat').value || 0),
+        lon: parseFloat(document.getElementById('lon').value || 0),
+        furnished: document.getElementById('furnished').checked,
+        air_conditioning: document.getElementById('air_conditioning').checked,
+        has_balcony: document.getElementById('has_balcony').checked,
+        has_elevator: document.getElementById('has_elevator').checked,
+        has_parking: document.getElementById('has_parking').checked,
+        has_garden: document.getElementById('has_garden').checked
+    };
+
+    try {
+        const res = await fetch('/api/add-property', { 
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify(data) 
+        });
+        const result = await res.json();
+        if(result.status === 'success') {
+            alertBox.className = 'alert alert-success mt-4 fw-bold'; 
+            alertBox.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>' + result.message;
+            this.reset();
+        } else {
+            alertBox.className = 'alert alert-danger mt-4'; alertBox.innerHTML = result.error;
+        }
+    } catch(err) { 
+        alertBox.className = 'alert alert-danger mt-4'; 
+        alertBox.innerHTML = 'Sunucu bağlantı hatası oluştu.'; 
+    } finally { 
+        alertBox.classList.remove('d-none'); 
+        btn.disabled = false; 
+        btn.innerHTML = '<i class="bi bi-database-add me-2"></i>MongoDB\'ye Yaz ve Modeli Güncelle'; 
+    }
+});
+
+// --- İLANLARI LİSTELEME VE SİLME ---
+async function loadProperties() {
+    const tbody = document.getElementById('propertyTableBody');
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4"><span class="spinner-border spinner-border-sm"></span> Yükleniyor...</td></tr>';
+    
+    try {
+        const res = await fetch('/api/properties?limit=15');
+        const result = await res.json();
+        
+        if (result.properties && result.properties.length > 0) {
+            tbody.innerHTML = result.properties.map(p => `
+                <tr>
+                    <td class="fw-bold text-truncate" style="max-width: 200px;">${p.title || 'İsimsiz'}</td>
+                    <td><span class="badge bg-secondary">${p.district || 'Bilinmiyor'}</span></td>
+                    <td>${Number(p.price).toLocaleString('tr-TR')} ₺</td>
+                    <td>${p.m2} m²</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-danger" onclick="deleteProperty('${p.id}')"><i class="bi bi-trash3"></i> Sil</button>
+                    </td>
+                </tr>
+            `).join('');
+        } else {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">İlan bulunamadı.</td></tr>';
+        }
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-danger">Veriler çekilemedi.</td></tr>';
+    }
+}
+
+async function deleteProperty(id) {
+    if(!confirm('Bu ilanı silmek istediğinize emin misiniz? Bu işlem AI modelini de güncelleyecektir.')) return;
+    
+    try {
+        const res = await fetch('/api/delete-property/' + id, { method: 'DELETE' });
+        const result = await res.json();
+        if(result.status === 'success') {
+            alert('İlan silindi ve model güncellendi.');
+            loadProperties(); 
+        } else {
+            alert('Hata: ' + result.error);
+        }
+    } catch (e) { alert('Bağlantı hatası.'); }
+}
+
+// --- YOLO OTOPARK RESMİ YÜKLEME ---
+document.getElementById('uploadParkingForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('uploadBtn');
+    const alertBox = document.getElementById('parkingAlertBox');
+    
+    const formData = new FormData();
+    formData.append('district', document.getElementById('parkingDistrict').value);
+    formData.append('file', document.getElementById('parkingFile').files[0]);
+
+    btn.disabled = true; btn.innerHTML = 'Yükleniyor...';
+    
+    try {
+        const res = await fetch('/api/upload-parking-with-district', { method: 'POST', body: formData });
+        const result = await res.json();
+        
+        if(result.status === 'success') {
+            alertBox.className = 'alert alert-success mt-4'; 
+            alertBox.innerHTML = result.message + '<br><small>' + result.note + '</small>';
+            this.reset();
+        } else {
+            alertBox.className = 'alert alert-danger mt-4'; alertBox.innerHTML = result.error;
+        }
+    } catch (e) {
+        alertBox.className = 'alert alert-danger mt-4'; alertBox.innerHTML = 'Bağlantı hatası.';
+    } finally {
+        alertBox.classList.remove('d-none'); btn.disabled = false; btn.innerHTML = 'YOLO Veri Havuzuna Gönder';
+    }
+});
+</script>
+</body>
+</html>

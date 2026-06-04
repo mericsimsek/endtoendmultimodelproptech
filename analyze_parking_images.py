@@ -133,14 +133,10 @@ class ParkingImageAnalyzer:
             # Sonuç resmini kaydet
             result_img_name = f"{img_path.stem}_result{img_path.suffix}"
             result_img_path = results_path / result_img_name
-            
-            # Sonuçları kaydet
-            results.save(save_dir=str(results_path))
-            
-            # Rename işlemi (YOLO otomatik isim verir, biz manuel düzeltiriz)
-            yolo_output = results_path / img_name
-            if yolo_output.exists() and not result_img_path.exists():
-                yolo_output.rename(result_img_path)
+            import cv2 as _cv2
+            rendered = results.render()[0]  # RGB numpy array
+            _cv2.imwrite(str(result_img_path),
+                         _cv2.cvtColor(rendered, _cv2.COLOR_RGB2BGR))
             
             # Dolu ve Boş sayılarını hesapla
             detections = results.pandas().xyxy[0]

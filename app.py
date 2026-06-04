@@ -10,7 +10,7 @@ import random
 import torch
 import threading
 from datetime import datetime
-import google.generativeai as genai
+
 from sklearn.neighbors import NearestNeighbors
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
@@ -18,6 +18,8 @@ from sklearn.preprocessing import RobustScaler
 from PIL import Image
 import logging
 from database import MongoDatabaseManager
+import os
+from dotenv import load_dotenv
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -25,10 +27,15 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-GEMINI_API_KEY = "AIzaSyAodd_5rBqE9dcqOHDlIyoHwwgF-_P0lCQ" 
-genai.configure(api_key=GEMINI_API_KEY)
-# app.py içindeki o satırı şununla değiştir:
-llm_model = genai.GenerativeModel('gemini-2.5-flash')
+load_dotenv()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("KRİTİK HATA: GEMINI_API_KEY bulunamadı! Lütfen .env dosyanızı kontrol edin.")
+
+
+from google import genai
+...
+client = genai.Client(api_key=GEMINI_API_KEY)
 # Yapılandırma
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['RESULTS_FOLDER'] = 'static/results'
@@ -104,14 +111,29 @@ class ModelManager:
     def load_yolo_model(self):
         """YOLO modelini yükle"""
         try:
-            if os.path.exists(YOLO_MODEL_PATH):
-                self.yolo_model = torch.hub.load('ultralytics/yolov5', 'custom', path=YOLO_MODEL_PATH)
-                self.yolo_model.eval()
-                logger.info("YOLO modeli yüklendi")
-            else:
-                logger.warning(f"YOLO model bulunamadı: {YOLO_MODEL_PATH}")
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            full_model_path = os.path.join(base_dir, "models", "yolov5", "yolov5", "runs", "train", "exp5", "weights", "best.pt")
+            yolo_repo_path = os.path.join(base_dir, "models", "yolov5", "yolov5")
+
+            if not os.path.exists(full_model_path):
+                logger.error(f"❌ YOLO model dosyası bulunamadı: {full_model_path}")
+                return
+
+            import sys
+            if yolo_repo_path not in sys.path:
+                sys.path.insert(0, yolo_repo_path)
+
+            import torch
+            from models.experimental import attempt_load
+
+            
+            self.yolo_model = attempt_load(full_model_path)
+            self.yolo_model.eval()
+
+            logger.info("✅ YOLO modeli başarıyla yüklendi!")
+
         except Exception as e:
-            logger.error(f"YOLO model yükleme hatası: {e}")
+            logger.error(f"❌ YOLO MODEL YÜKLEME HATASI: {e}")
     
     def get_real_recommendations_advanced(self, property_id, n=10, weight_loc=0.3, weight_lux=0.2, max_price_diff=0.3):
         """
@@ -1169,33 +1191,26 @@ def hybrid_recommend_improved(property_id, df, model, weight_location=0.3, weigh
 
 @app.route('/api/properties', methods=['GET'])
 def get_properties_api():
-    """Tüm ilanları MongoDB'den getirir, temizler ve JSON olarak sunar"""
+    """Tüm ilanları MongoDB'den getirir (En Yeniler İlk Sırada)"""
     try:
         limit = int(request.args.get('limit', 50))
-        properties_cursor = model_manager.db_manager.get_all_properties(limit=limit)
+        
+        # ⭐ DÜZELTME BURADA: .sort('_id', -1) ile en son eklenenleri en üste alıyoruz
+        properties_cursor = model_manager.db_manager.properties.find().sort('_id', -1).limit(limit)
         
         properties_list = []
         for prop in properties_cursor:
-            # DÜZELTME 1: ID'yi MongoDB'nin _id'sinden alıp string'e çeviriyoruz.
             prop['id'] = str(prop['_id']) 
-            
-            # DÜZELTME 2: ObjectId, JSON formatına uygun değildir, bu yüzden onu siliyoruz.
             prop.pop('_id', None)
             
-            # İYİLEŞTİRME 1: Gereksiz veya eski oda anahtarlarını temizliyoruz.
-            # Sadece 'totalrooms' anahtarını bırakıyoruz.
+            # Gereksizleri temizle
             prop.pop('rooms', None)
             prop.pop('total_rooms', None)
-
-            # İYİLEŞTİRME 2 (Opsiyonel): İstemediğimiz başka alanlar varsa onları da silebiliriz.
-            # Örneğin, AI için kullandığımız teknik alanları ön yüze göndermeyelim.
             prop.pop('room_density', None)
             prop.pop('m2_location_interact', None)
             
             properties_list.append(prop)
             
-        logger.info(f"MongoDB'den {len(properties_list)} temizlenmiş ilan getirildi")
-        
         return jsonify({
             'status': 'success',
             'properties': properties_list,
@@ -1204,7 +1219,23 @@ def get_properties_api():
     except Exception as e:
         logger.error(f"Properties API hatası: {e}", exc_info=True)
         return jsonify({'error': 'İlanlar yüklenirken bir sunucu hatası oluştu.'}), 500
-
+@app.route('/api/delete-property/<property_id>', methods=['DELETE'])
+def api_delete_property(property_id):
+    """İlanı veritabanından siler ve AI modelini günceller"""
+    try:
+        from bson import ObjectId
+        result = model_manager.db_manager.properties.delete_one({'_id': ObjectId(property_id)})
+        
+        if result.deleted_count > 0:
+            # JÜRİ ŞOVU: İlan silinince AI modelini yeniden eğitiyoruz ki önermesin
+            model_manager.prepare_ai_recommendation_data()
+            return jsonify({'status': 'success', 'message': 'İlan başarıyla silindi ve AI güncellendi'})
+            
+        return jsonify({'status': 'error', 'error': 'İlan bulunamadı'}), 404
+        
+    except Exception as e:
+        logger.error(f"İlan silme API hatası: {e}")
+        return jsonify({'status': 'error', 'error': str(e)}), 500
 @app.route('/all-properties')
 def all_properties_page():
     """Tüm ilanları listeleyen sayfa"""
@@ -1670,7 +1701,6 @@ def upload_parking_image():
         if not model_manager.yolo_model:
             return jsonify({'error': 'YOLO modeli yüklenmedi'}), 500
         
-        # Opsiyonel property_id al
         prop_id = request.form.get('property_id')
 
         # Dosyayı kaydet
@@ -1679,21 +1709,58 @@ def upload_parking_image():
         file.save(filepath)
         
         # YOLO ile analiz yap
-        results = model_manager.yolo_model(filepath)
-        
-        # Sonuçları kaydet
-        results.save(save_dir=app.config['RESULTS_FOLDER'])
-        
-        # Sonuçları analiz et
-        df = results.pandas().xyxy[0]
-        total = len(df)
-        occupied = len(df[df['name'] == 'Dolu'])
-        empty = len(df[df['name'] == 'Bos'])
-        
-        # YOLOv5 sonuç kaydı aynı dosya adıyla yapılır
+        import torch
+        import numpy as np
+        import sys
+        import os as _os
+
+        base_dir = _os.path.dirname(_os.path.abspath(__file__))
+        yolo_repo_path = _os.path.join(base_dir, "models", "yolov5", "yolov5")
+        if yolo_repo_path not in sys.path:
+            sys.path.insert(0, yolo_repo_path)
+
+        from utils.general import non_max_suppression, scale_boxes
+        from utils.augmentations import letterbox
+
+        img = cv2.imread(filepath)
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        img_resized = letterbox(img_rgb, 640)[0]
+        img_tensor = torch.from_numpy(img_resized.transpose(2, 0, 1)).float() / 255.0
+        img_tensor = img_tensor.unsqueeze(0)
+
+        with torch.no_grad():
+            pred = model_manager.yolo_model(img_tensor)[0]
+            pred = non_max_suppression(pred, conf_thres=0.25, iou_thres=0.45)[0]
+
+        total = 0
+        occupied = 0
+        empty = 0
+
+        if pred is not None and len(pred):
+            pred[:, :4] = scale_boxes(img_tensor.shape[2:], pred[:, :4], img.shape).round()
+            names = model_manager.yolo_model.names
+
+            for *xyxy, conf, cls in pred:
+                total += 1
+                label = names[int(cls)]
+                if label == 'Dolu':
+                    occupied += 1
+                else:
+                    empty += 1
+
+                x1, y1, x2, y2 = map(int, xyxy)
+                color = (0, 0, 255) if label == 'Dolu' else (0, 255, 0)
+                cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
+                cv2.putText(img, f"{label} {conf:.2f}", (x1, y1 - 5),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+
+        # Sonucu kaydet
         result_filename = filename
-        
-        # Analizi DB'ye kaydet (property varsa)
+        result_path = os.path.join(app.config['RESULTS_FOLDER'], result_filename)
+        cv2.imwrite(result_path, img)
+
+        # Analizi DB'ye kaydet
         try:
             if prop_id:
                 model_manager.db_manager.insert_parking_analysis({
@@ -1707,17 +1774,17 @@ def upload_parking_image():
             logger.warning(f"Parking kaydı yapılamadı: {e}")
 
         response = {
-            'status': 'success',
-            'timestamp': datetime.now().isoformat(),
-            'original': f"/uploads/{filename}",
-            'result': f"/results/{result_filename}",
-            'analysis': {
-                'total_spots': total,
-                'occupied_spots': occupied,
-                'empty_spots': empty,
-                'occupancy_rate': round(occupied / total * 100, 2) if total > 0 else 0,
-                'vacancy_rate': round(empty / total * 100, 2) if total > 0 else 0
-            }
+    'status': 'success',
+    'timestamp': datetime.now().isoformat(),
+    'original': f"/static/uploads/{filename}",
+    'result': f"/static/results/{result_filename}",
+    'analysis': {
+        'total_spots': total,
+        'occupied_spots': occupied,
+        'empty_spots': empty,
+        'occupancy_rate': round(occupied / total * 100, 2) if total > 0 else 0,
+        'vacancy_rate': round(empty / total * 100, 2) if total > 0 else 0
+        }
         }
         
         return jsonify(response)
@@ -1725,7 +1792,6 @@ def upload_parking_image():
     except Exception as e:
         logger.error(f"Parking analiz hatası: {e}")
         return jsonify({'error': str(e)}), 500
-
 # ========================= CAMERA OPERATIONS =========================
 
 def camera_loop(camera_id=0):
@@ -1855,18 +1921,83 @@ def chat_assistant():
         """
         
         # LLM'e soruyu gönder (Eğer burada hata varsa terminale yazdıracak)
-        response = llm_model.generate_content(system_context + user_message)
-        
-        return jsonify({
-            'status': 'success',
-            'reply': response.text
-        })
+        response = client.models.generate_content(
+    model='gemini-2.5-flash',
+    contents=system_context + user_message
+)
+        return jsonify({'status': 'success', 'reply': response.text})
         
     except Exception as e:
         print(f"❌ CHATBOT HATASI: {str(e)}") # Hatayı terminalde görmek için ekledik
         return jsonify({'status': 'error', 'error': 'Bağlantı hatası: Lütfen terminali kontrol edin.'}), 500
 
+# ========================= ADMIN PANEL & İLAN EKLEME =========================
 
+@app.route('/admin')
+def admin_page():
+    """Admin paneli ve ilan ekleme sayfası"""
+    return render_template('admin.html')
+
+@app.route('/api/add-property', methods=['POST'])
+def api_add_property():
+    """Yeni ilanı veritabanına kaydeder"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'status': 'error', 'error': 'Veri alınamadı'}), 400
+
+        # Verileri güvenli şekilde dönüştür ve hazırla
+        new_prop = {
+            "title": data.get("title", "Yeni İlan"),
+            "district": data.get("district", "Bilinmiyor"),
+            "province": data.get("province", "İstanbul"),
+            "price": float(data.get("price", 0)),
+            "m2": float(data.get("m2", 100)),
+            "totalrooms": int(data.get("totalrooms", 3)),
+            "bathroom_count": int(data.get("bathroom_count", 1)),
+            "location_score": float(data.get("location_score", 5)),
+            "luxury_score": float(data.get("luxury_score", 5)),
+            
+            # --- YENİ EKLENEN ÖZELLİKLER (SAYISAL) ---
+            "building_age": int(data.get("building_age", 0)),
+            "floor_level": int(data.get("floor_level", 1)),
+            
+            # --- YENİ EKLENEN ÖZELLİKLER (BOOLEAN) ---
+            "furnished": bool(data.get("furnished", False)),
+            "air_conditioning": bool(data.get("air_conditioning", False)),
+            "has_balcony": bool(data.get("has_balcony", False)),
+            "has_elevator": bool(data.get("has_elevator", False)),
+            "has_parking": bool(data.get("has_parking", False)),
+            "has_garden": bool(data.get("has_garden", False)),
+            
+            "lat": float(data.get("lat", 0.0)),
+            "lon": float(data.get("lon", 0.0)),
+            "listing_type": "sale",
+            "image": data.get("image", "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400"),
+            "created_at": datetime.now()
+        }
+
+        # KNN Öneri motorun için kritik olan m2 fiyatını otomatik hesapla
+        new_prop["price_per_m2"] = new_prop["price"] / new_prop["m2"] if new_prop["m2"] > 0 else 0
+
+        # Veritabanına kaydet
+        inserted_id = model_manager.db_manager.add_new_property(new_prop)
+
+        if inserted_id:
+            # JÜRİ ŞOVU: Yeni ilan eklendiğinde AI modelinin verisini anında güncelliyoruz
+            model_manager.prepare_ai_recommendation_data()
+            
+            return jsonify({
+                "status": "success", 
+                "message": "İlan başarıyla eklendi ve Yapay Zeka motoruna dahil edildi!", 
+                "id": inserted_id
+            })
+            
+        return jsonify({"status": "error", "error": "Veritabanına kaydedilemedi."}), 500
+
+    except Exception as e:
+        logger.error(f"İlan ekleme API hatası: {e}")
+        return jsonify({"status": "error", "error": str(e)}), 500
 
 if __name__ == '__main__':
     print("Flask uygulaması başlatılıyor...")

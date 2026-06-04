@@ -433,3 +433,11 @@ class MongoDatabaseManager:
         except Exception as e:
             self.logger.error(f"get_popular_properties error: {e}")
             return []
+    def add_new_property(self, property_data):
+        """Yeni ilanı veritabanına ekler"""
+        try:
+            result = self.properties.insert_one(property_data)
+            return str(result.inserted_id)
+        except Exception as e:
+            print(f"İlan ekleme hatası: {e}")
+            return None
