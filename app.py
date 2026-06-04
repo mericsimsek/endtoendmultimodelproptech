@@ -386,7 +386,26 @@ class ModelManager:
             # Feature engineering için gerekli kolonlar
             self.add_engineered_features(df)
             
+            # ========================================================
+            # 🚀 JSON NaN HATASINI KÖKÜNDEN ÇÖZEN KISIM
+            # ========================================================
+            # 1. Eksik resimleri (NaN) varsayılan resimle doldur
+            if 'image' in df.columns:
+                df['image'] = df['image'].fillna('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400')
+            else:
+                df['image'] = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400'
+                
+            # 2. Pandas içindeki kalan tüm 'NaN' (Not a Number) değerlerini 
+            # Frontend'in (JSON) anlayabildiği 'None' (null) yapısına dönüştür.
+            df = df.where(pd.notna(df), None)
+            # ========================================================
+            
             return df
+            
+        except Exception as e:
+            logger.error(f"Veri temizleme hatası: {e}")
+            # Hata anında bile NaN'ları temizle ki frontend çökmesin
+            return df.where(pd.notna(df), None)
             
         except Exception as e:
             logger.error(f"Veri temizleme hatası: {e}")
