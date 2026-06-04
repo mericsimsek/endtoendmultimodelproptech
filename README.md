@@ -40,8 +40,8 @@ Projenin en yenilikçi adımıdır. Bir evin değeri sadece iç özellikleriyle 
 * **Gerçek Zamanlı Tespit:** Sokak, drone veya otopark güvenlik kameralarından alınan görüntüler, **YOLOv5 (You Only Look Once)** Evrişimli Sinir Ağları (CNN) modeline beslenir.
 * **Bypass ve Optimizasyon:** Kütüphane bağımlılıklarını (dependency hell) ortadan kaldırmak için görüntüler doğrudan **OpenCV** ile okunur, tensörlere dönüştürülüp işlenir. Model, %94.8 mAP skoru ile dolu ve boş alanları tespit ederek o bölgeye özel dinamik bir "Park Kolaylık Skoru" (1-10) üretir.
 
-![Otopark Analizi 1](pics/computervisiın.jpg)
-![Otopark Analizi 2](pics/computervision1.jpg)
+![Otopark Analizi 1](pics/computervisiın.png)
+![Otopark Analizi 2](pics/computervision1.png)
 
 ### 3. Çok Boyutlu Hibrit Öneri Sistemi (KNN)
 Kullanıcının referans aldığı bir ilana en uygun alternatifleri bulmak için sadece fiyata bakan ilkel sistemler yerine, n-boyutlu bir vektör uzayı inşa edilmiştir.
